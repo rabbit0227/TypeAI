@@ -1,5 +1,5 @@
-## TypeAI
-#Introduction
+# TypeAI
+## Introduction
 The TypeAI project aims to develop a web-based text editing platform that empowers users to
 improve their writing through AI-driven corrections, with the Text Correction System as a core
 component. This Software Requirements Specification (SRS) outlines the software request for the Text
