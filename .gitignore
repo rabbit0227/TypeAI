@@ -1,0 +1,3 @@
+# any venv folder is ignored
+/venv
+/env
