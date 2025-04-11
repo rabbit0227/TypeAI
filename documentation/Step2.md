@@ -6,6 +6,12 @@ This documentation is for the Second steps to develop in the project for any use
 
 ## Django Development Guide
 
+### 0. Apps
+
+``` bash
+python manage.py startapp myapp
+```
+
 ### 1. Models
 #### 1.1 Define Models
 In `myapp/models.py`, create models for your app.

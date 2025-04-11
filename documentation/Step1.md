@@ -27,7 +27,7 @@ cd TypeAI
 ```bash
 git branch -a
 ```
-- Use `checkout` to switch to the remote branch of your choice
+- Use `checkout` to switch to the remote branch of your choice for testing their code
 ```bash
 git checkout remotes/origin/md-branch
 ```
