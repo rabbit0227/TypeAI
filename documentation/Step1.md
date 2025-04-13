@@ -27,7 +27,7 @@ cd TypeAI
 ```bash
 git branch -a
 ```
-- Use `checkout` to switch to the remote branch of your choice
+- Use `checkout` to switch to the remote branch of your choice for testing their code
 ```bash
 git checkout remotes/origin/md-branch
 ```
@@ -52,7 +52,7 @@ pip install -r req.txt
 #### 6 - Run the current Django project and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ```bash
-python TypeAI/manage.py runserver
+python TypeAI_djn/manage.py runserver
 ```
 #### 7 - Now you can visit:
 - Django admin page [Link](http://127.0.0.1:8000/admin/)

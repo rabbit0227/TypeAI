@@ -7,7 +7,12 @@ This documentation is for the Second steps to develop in the project for any use
 ## Django Development Guide
 
 ### 0. Apps
+<<<<<<< HEAD
 ```
+=======
+
+``` bash
+>>>>>>> origin
 python manage.py startapp myapp
 ```
 
