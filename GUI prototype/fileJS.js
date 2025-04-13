@@ -10,9 +10,16 @@ const elements = {
     showCorrectedBtn: document.getElementById('showCorrectedBtn'),
     diffArea: document.getElementById('diffArea'),
     updateBtn: document.getElementById('updateBtn'),
+    showWrongBtn: document.getElementById('showWrongBtn'),
     confirmationButtons: document.getElementById('confirmationButtons'),
     activityLog: document.getElementById('activityLog'),
-    themeToggleBtn: document.getElementById('themeToggleBtn')
+    themeToggleBtn: document.getElementById('themeToggleBtn'),
+    userPic: document.querySelector('.user-pic'),
+    userDropdown: document.getElementById('userDropdown'),
+    availableTokens: document.getElementById('availableTokens'),
+    usedTokens: document.getElementById('usedTokens'),
+    hamburgerBtn: document.getElementById('hamburgerBtn'),
+    navLinks: document.getElementById('navLinks')
 };
 
 // State management
@@ -21,10 +28,11 @@ let state = {
     asteriskText: '',
     wrongWords: [],
     isCorrectedVisible: false,
+    isWrongWordsVisible: false,
     updateSource: 'spelling',
     selectionStart: 0,
     selectionEnd: 0,
-    fullCorrectedText: '' // Tracks the full text after partial correction
+    fullCorrectedText: ''
 };
 
 // Memoization cache for spelling checks
@@ -39,13 +47,21 @@ const debounce = (func, delay) => {
     };
 };
 
+// Update token count
+function updateTokenCount() {
+    const text = elements.editor.value;
+    const usedTokens = text.trim() ? text.split(/\s+/).length : 0;
+    const maxTokens = 1000; // Example max tokens
+    elements.usedTokens.textContent = `Used Tokens: ${usedTokens}`;
+    elements.availableTokens.textContent = `Available Tokens: ${maxTokens - usedTokens}`;
+}
+
 // Check spelling for selected or full text
 function checkSpelling() {
     const fullText = elements.editor.value;
     state.selectionStart = elements.editor.selectionStart;
     state.selectionEnd = elements.editor.selectionEnd;
 
-    // Determine text to check
     let textToCheck = fullText;
     let isPartial = false;
     if (state.selectionStart !== state.selectionEnd) {
@@ -58,7 +74,6 @@ function checkSpelling() {
         return;
     }
 
-    // Check cache
     const cacheKey = `${textToCheck}_${state.selectionStart}_${state.selectionEnd}`;
     if (spellingCache.has(cacheKey)) {
         const { correctedText, asteriskText, wrongWords } = spellingCache.get(cacheKey);
@@ -66,8 +81,7 @@ function checkSpelling() {
         return;
     }
 
-    // Split text into words, respecting boundaries
-    const words = textToCheck.split(/(\s+)/); // Preserve whitespace
+    const words = textToCheck.split(/(\s+)/);
     let correctedWords = '';
     const wrongWords = [];
     let asteriskText = '';
@@ -83,7 +97,6 @@ function checkSpelling() {
             wrongWords.push(cleanWord);
             const suggestions = dictionary.suggest(cleanWord);
             if (suggestions.length) {
-                // Replace only the clean word, preserving punctuation
                 const correctedWord = word.replace(cleanWord, suggestions[0]);
                 correctedWords += correctedWord;
                 asteriskText += '*'.repeat(word.length) + (i < words.length - 1 ? ' ' : '');
@@ -97,14 +110,12 @@ function checkSpelling() {
         }
     }
 
-    // If partial, reconstruct full text with corrected portion
     const result = {
         correctedText: correctedWords,
         asteriskText: asteriskText.trim(),
         wrongWords
     };
 
-    // Cache results
     spellingCache.set(cacheKey, result);
 
     updateCorrections(result.correctedText, result.asteriskText, result.wrongWords, isPartial, fullText);
@@ -122,30 +133,47 @@ function updateCorrections(correctedText, asteriskText, wrongWords, isPartial, f
         : correctedText;
     elements.correctionsArea.value = asteriskText;
     elements.showCorrectedBtn.style.display = wrongWords.length ? 'inline-block' : 'none';
+    elements.showWrongBtn.style.display = wrongWords.length ? 'inline-block' : 'none';
+    elements.updateBtn.style.display = wrongWords.length ? 'inline-block' : 'none';
+    state.isWrongWordsVisible = false;
+    elements.showWrongBtn.textContent = 'Show Wrong Words';
 }
 
 // Reset corrections UI
 function resetCorrections() {
     elements.correctionsArea.value = '';
     elements.showCorrectedBtn.style.display = 'none';
+    elements.showWrongBtn.style.display = 'none';
+    elements.updateBtn.style.display = 'none';
+    state.isWrongWordsVisible = false;
     state.fullCorrectedText = '';
 }
 
 // Toggle corrected text visibility
 function toggleCorrected() {
     state.isCorrectedVisible = !state.isCorrectedVisible;
+    state.isWrongWordsVisible = false;
+    elements.showWrongBtn.textContent = 'Show Wrong Words';
     elements.correctionsArea.value = state.isCorrectedVisible ? state.correctedText : state.asteriskText;
     elements.showCorrectedBtn.textContent = state.isCorrectedVisible ? 'Hide Corrected' : 'Show Corrected';
 }
 
-// Show misspelled words
-function showWrongWords() {
-    if (state.wrongWords.length) {
-        const asteriskCount = (state.asteriskText.match(/\*/g) || []).length;
-        elements.correctionsArea.value = `Number of asterisks (misspelled characters): ${asteriskCount}\n\n${state.wrongWords.join('\n')}`;
+// Toggle misspelled words
+function toggleWrongWords() {
+    state.isWrongWordsVisible = !state.isWrongWordsVisible;
+    if (state.isWrongWordsVisible) {
+        if (state.wrongWords.length) {
+            const asteriskCount = (state.asteriskText.match(/\*/g) || []).length;
+            elements.correctionsArea.value = `Number of asterisks (misspelled characters): ${asteriskCount}\n\n${state.wrongWords.join('\n')}`;
+        } else {
+            elements.correctionsArea.value = 'No misspelled words found.';
+        }
         elements.showCorrectedBtn.style.display = 'none';
+        elements.showWrongBtn.textContent = 'Hide Wrong Words';
     } else {
-        elements.correctionsArea.value = 'No misspelled words found.';
+        elements.correctionsArea.value = state.isCorrectedVisible ? state.correctedText : state.asteriskText;
+        elements.showCorrectedBtn.style.display = state.wrongWords.length ? 'inline-block' : 'none';
+        elements.showWrongBtn.textContent = 'Show Wrong Words';
     }
 }
 
@@ -230,6 +258,8 @@ async function updateFromFile() {
         state.updateSource = 'file';
         elements.correctionsArea.value = text;
         elements.showCorrectedBtn.style.display = 'none';
+        elements.showWrongBtn.style.display = 'none';
+        elements.updateBtn.style.display = 'inline-block';
         showUpdateConfirmation();
         addLogEntry('File updated');
     } catch (err) {
@@ -248,7 +278,7 @@ function confirmUpdate() {
 function cancelUpdate() {
     elements.diffArea.style.display = 'none';
     elements.confirmationButtons.style.display = 'none';
-    elements.updateBtn.style.display = 'inline-block';
+    elements.updateBtn.style.display = state.wrongWords.length ? 'inline-block' : 'none';
     state.updateSource = 'spelling';
     state.selectionStart = 0;
     state.selectionEnd = 0;
@@ -258,14 +288,16 @@ function cancelUpdate() {
 function resetState() {
     elements.correctionsArea.value = '';
     elements.showCorrectedBtn.style.display = 'none';
+    elements.showWrongBtn.style.display = 'none';
+    elements.updateBtn.style.display = 'none';
     elements.diffArea.style.display = 'none';
     elements.confirmationButtons.style.display = 'none';
-    elements.updateBtn.style.display = 'inline-block';
     state = {
         correctedText: '',
         asteriskText: '',
         wrongWords: [],
         isCorrectedVisible: false,
+        isWrongWordsVisible: false,
         updateSource: 'spelling',
         selectionStart: 0,
         selectionEnd: 0,
@@ -298,6 +330,17 @@ function addCollaborator() {
     alert('Add collaborator feature not yet implemented.');
 }
 
+// User dropdown functions
+function openSettings() {
+    addLogEntry('Settings opened');
+    alert('Settings feature not yet implemented.');
+}
+
+function logout() {
+    addLogEntry('User logged out');
+    alert('Logout feature not yet implemented.');
+}
+
 // Log activity with limit
 function addLogEntry(message) {
     const entry = document.createElement('p');
@@ -311,6 +354,7 @@ function addLogEntry(message) {
 // Debounced input handler
 const handleInput = debounce(() => {
     resetState();
+    updateTokenCount();
 }, 300);
 
 // Event listeners
@@ -322,10 +366,31 @@ elements.themeToggleBtn.addEventListener('click', () => {
     elements.themeToggleBtn.textContent = isDark ? 'Light Theme' : 'Dark Theme';
 });
 
-// Initialize theme
+elements.userPic.addEventListener('click', () => {
+    elements.userDropdown.classList.toggle('active');
+});
+
+elements.hamburgerBtn.addEventListener('click', () => {
+    elements.navLinks.classList.toggle('active');
+    elements.hamburgerBtn.classList.toggle('active');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!elements.userMenu.contains(e.target)) {
+        elements.userDropdown.classList.remove('active');
+    }
+    if (!elements.navLinks.contains(e.target) && !elements.hamburgerBtn.contains(e.target)) {
+        elements.navLinks.classList.remove('active');
+        elements.hamburgerBtn.classList.remove('active');
+    }
+});
+
+// Initialize theme and token count
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-theme');
         elements.themeToggleBtn.textContent = 'Light Theme';
     }
+    updateTokenCount();
 });
