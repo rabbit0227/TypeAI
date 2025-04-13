@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Editor with Spell Check</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="nav-right">
+                <img src="logo-placeholder.png" alt="Logo" class="logo">
+            </div>
+            <div class="nav-center">
+                <a href="#" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link">Logout</a>
+                <button id="themeToggleBtn">Toggle Theme</button>
+            </div>
+            <div class="nav-left">
+                <img src="user-placeholder.png" alt="User" class="user-pic">
+            </div>
+        </nav>
+
+        <!-- Main Layout -->
+        <div class="content-container">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <!-- Top Section: Action Buttons -->
+                <div class="sidebar-top">
+                    <button class="sidebar-button" id="updateFileBtn" onclick="updateFromFile()" title="Update from File">
+                        <span class="icon">🗄️</span><span class="button-text">Update File</span>
+                    </button>
+                    <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
+                        <span class="icon">🔗</span><span class="button-text">Share</span>
+                    </button>
+                    <button class="sidebar-button" id="saveBtn" onclick="saveText()" title="Save">
+                        <span class="icon">💾</span><span class="button-text">Save</span>
+                    </button>
+                    <button class="sidebar-button" id="addCollaboratorBtn" onclick="addCollaborator()" title="Add Collaborator">
+                        <span class="icon">👥</span><span class="button-text">Add Collaborator</span>
+                    </button>
+                </div>
+                <!-- Bottom Section: Activity Log -->
+                <div class="sidebar-bottom">
+                    <h3>Recent Activity</h3>
+                    <div id="activityLog">
+                        <!-- Log entries will be populated by JavaScript -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Editor Section -->
+            <div class="editor-section">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <button id="spellCheckBtn" onclick="checkSpelling()">Check Spelling</button>
+                    <button id="showWrongBtn" onclick="showWrongWords()">Show Wrong Words</button>
+                    <button id="showCorrectedBtn" onclick="toggleCorrected()" style="display: none;">Show Corrected</button>
+                    <button id="updateBtn" onclick="showUpdateConfirmation()">Update</button>
+                    <div id="confirmationButtons" style="display: none;">
+                        <button id="confirmUpdateBtn" onclick="confirmUpdate()">Confirm</button>
+                        <button id="cancelUpdateBtn" onclick="cancelUpdate()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Editor Area -->
+                <div class="editor-area">
+                    <textarea id="editor" placeholder="Type your text here..."></textarea>
+                    <textarea id="correctionsArea" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar (Diff Area) -->
+        <div class="bottom-bar" id="diffArea" style="display: none;">
+            <!-- Diff content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/typo-js@1.2.4/typo.js"></script>
+    <script src="fileJS.js"></script>
+</body>
+</html>
