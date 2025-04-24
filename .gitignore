@@ -4,4 +4,6 @@
 /Report
 
 # ignoring caches
-/TypeAI/TypeAI_djn/TypeAI_djn/__pycache__
+/TAI/TAI/__pycache__
+
+/TAI/mainapp/__pycache__
