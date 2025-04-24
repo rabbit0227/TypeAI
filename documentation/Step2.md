@@ -6,14 +6,53 @@ This documentation is for the Second steps to develop in the project for any use
 
 ## Django Development Guide
 
-### 0. Apps
+
+
+### 1. Apps
+#### 1.1 Concepts:
+
+- A Django app is a self-contained module within a Django project that handles a specific piece of functionality (e.g., user authentication, blog, or text editing). Apps are reusable and can be plugged into multiple projects.
+- An app is a Python package with its own models, views, templates, and URLs. It interacts with the project’s settings and database through Django’s ORM (Object-Relational Mapping). 
+- Apps promote modularity, making code easier to maintain, test, and reuse. You can develop an app independently and integrate it into other projects, improving scalability and organization.
+
+#### 1.2 Steps:
+1. make the app
 
 ``` bash
-python manage.py startapp myapp
+python TypeAI_djn/manage.py startapp myapp
 ```
+2. Add the app to (`TypeAI_djn/settings.py`):
 
-### 1. Models
-#### 1.1 Define Models
+     ```python
+     # Application definition
+
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'main_feat'
+    ]
+     # front-end dir setup
+     STATIC_URL = '/static/'
+     STATICFILES_DIRS = [BASE_DIR / 'static']
+     # directing the user to a url (made one in dev)
+     LOGIN_REDIRECT_URL = 'dashboard'
+     LOGOUT_REDIRECT_URL = 'home'
+     ```
+
+3. Run initial migrations to set up the database:
+   ```bash
+   python manage.py migrate
+   ```
+
+
+2. add to the project
+
+### 2. Models
+#### 2.1 Define Models
 In `myapp/models.py`, create models for your app.
 
 Conceder Models as tables or classes of objects for entities in your project.
@@ -30,7 +69,7 @@ class MyModel(models.Model):
         # you can edit the form of the output here before returning it
         return self.name
 ```
-#### 1.2 Apply Migrations
+#### 2.2 Apply Migrations
 
 To create database tables for your models, run:
 
@@ -39,9 +78,9 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 2. Views
+### 3. Views
 
-#### 2.1 Create Views
+#### 3.1 Create Views
 
 In `myapp/views.py`, define views to handle requests.
 
@@ -55,7 +94,7 @@ def index(request):
     return HttpResponse(f"Items: {items}")
 ```
 
-#### 2.2 Map Views to URLs
+#### 3.2 Map Views to URLs
 In `myapp/urls.py`, define URL patterns.
 
 Note that this is the `urls` for the app not the project
@@ -69,8 +108,8 @@ urlpatterns = [
     path('', views.index, name='index'),
 ]
 ```
-### 3. URLs
-#### 3.1 Include App URLs
+### 4. URLs
+#### 4.1 Include App URLs
 In `myproject/urls.py`, include the URLs of your app.
 
 Note that this is the `urls` for the project not the app
@@ -83,8 +122,8 @@ urlpatterns = [
     path('', include('myapp.urls')),
 ]
 ```
-### 4. Migrations
-#### 4.1 Make Migrations
+### 5. Migrations
+#### 5.1 Make Migrations
 After modifying models, create migrations to apply changes.
 
 ``` bash
@@ -92,15 +131,15 @@ python manage.py makemigrations
 ```
 if you have problems with this command make sure you are in the project directory
 
-#### 4.2 Apply Migrations
+#### 5.2 Apply Migrations
 Apply migrations to the database.
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. Running the Server
-#### 5.1 Start the Development Server
+### 6. Running the Server
+#### 6.1 Start the Development Server
 ```bash
 python manage.py runserver
 ```
