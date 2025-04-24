@@ -2,3 +2,6 @@
 /venv
 /env
 /Report
+
+# ignoring caches
+/TypeAI/TypeAI_djn/TypeAI_djn/__pycache__
