@@ -5,26 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TypeAI{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'home-page' %}">Home</a></li>
-                <li><a href="">Signup</a></li>
-                <li><a href="">Login</a></li>
-                <li><a href="">Dashboard</a></li>
-            </ul>
+    <div class="main-container">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="{% static 'media/logo.svg' %}" alt="Logo" class="logo">
+            </div>
+            <div class="nav-center">
+                <button class="hamburger" id="hamburgerBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-links" id="navLinks">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+                        <a href="{% url 'text_editor' %}" class="nav-link">Text Editor</a>
+                        <a href="{% url 'settings' %}" class="nav-link">Settings</a>
+                        <button id="themeToggleBtn">Toggle Theme</button>
+                    {% else %}
+                        <a href="{% url 'home-page' %}" class="nav-link">Home</a>
+                        <a href="{% url 'sign_up' %}" class="nav-link">Sign Up</a>
+                        <a href="{% url 'sign_in' %}" class="nav-link">Sign In</a>
+                        <button id="themeToggleBtn">Toggle Theme</button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                    <div class="user-menu">
+                        <img src="{% static 'media/user.jpg' %}" alt="User" class="user-pic">
+                        <div class="dropdown-menu" id="userDropdown">
+                            <button class="dropdown-item" onclick="window.location.href='{% url 'settings' %}'">Settings</button>
+                            <button class="dropdown-item" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </nav>
-    </header>
 
-    <main>
-        {% block content %}
-            <!-- Page-specific content goes here -->
-        {% endblock %}
-    </main>
+        <!-- Main Content -->
+        <div class="content-container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
 
     <footer>
         <p>&copy; 2025 TypeAI</p>

@@ -1,0 +1,12 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <h2>Welcome, {{ user.username }}!</h2>
+    <p>This is your dashboard. Access your documents and settings from the navigation bar.</p>
+    <div class="dashboard-actions">
+        <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a>
+        <a href="{% url 'settings' %}" class="cta-button secondary">Manage Settings</a>
+    </div>
+</div>
+{% endblock %}

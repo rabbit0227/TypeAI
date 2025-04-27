@@ -1,0 +1,19 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <h2>Sign Up</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="post" action="{% url 'sign_up' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="auth-button">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'sign_in' %}">Sign In</a></p>
+</div>
+{% endblock %}
+

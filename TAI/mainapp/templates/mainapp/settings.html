@@ -1,0 +1,22 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="settings-container">
+    <h2>Settings</h2>
+    <form method="post" action="{% url 'settings' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="form-group">
+            <label for="theme">Theme Preference</label>
+            <select id="theme" name="theme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+        <button type="submit" class="auth-button">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

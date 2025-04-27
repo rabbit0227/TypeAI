@@ -1,8 +1,25 @@
 {% extends 'mainapp/base.html' %}
-
-{% block title %}Home - My Django Project{% endblock %}
-
+{% block title %}Home{% endblock %}
 {% block content %}
-<h2>Welcome to the Home Page!</h2>
-<p><a href="">Sign Up</a> | <a href="">Login</a></p>
+<section class="showcase-section hero">
+    <div class="showcase-content">
+        <h1>Welcome to Our App</h1>
+        <p>Experience seamless text editing with AI-powered spell checking and collaboration tools.</p>
+        <a href="{% url 'sign_up' %}" class="cta-button">Get Started</a>
+    </div>
+</section>
+<section class="showcase-section feature">
+    <div class="showcase-content">
+        <h2>AI-Powered Editing</h2>
+        <p>Instantly detect and correct spelling errors with our advanced AI technology.</p>
+        <a href="{% url 'text_editor' %}" class="cta-button secondary">Try Editor</a>
+    </div>
+</section>
+<section class="showcase-section feature">
+    <div class="showcase-content">
+        <h2>Collaborate Effortlessly</h2>
+        <p>Share documents and work together in real-time with your team.</p>
+        <a href="{% url 'sign_up' %}" class="cta-button secondary">Join Now</a>
+    </div>
+</section>
 {% endblock %}
