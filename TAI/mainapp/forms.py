@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Tier
+from .models import UserProfile
 
 class SignUpForm(UserCreationForm):
     
@@ -10,20 +10,13 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email and User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("This email address is already in use.")
-        return email
-
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
         if commit:
             user.save()
+        profile = UserProfile(associated_user=user)
+        profile.save()
+
         return user
     
 
-
-class TierChangeForm(forms.Form):
-    tier = forms.ModelChoiceField(queryset=Tier.objects.all(), required=True)

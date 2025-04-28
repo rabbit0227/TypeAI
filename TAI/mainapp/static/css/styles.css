@@ -269,6 +269,11 @@ body.dark-theme #themeToggleBtn:hover {
     flex: 1;
     overflow: auto;
 }
+.editor-content-container {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+}
 
 /* Home Page Showcase */
 .showcase-section {
@@ -576,6 +581,7 @@ body.dark-theme .sidebar-button .icon {
     }
 }
 
+/* Editor Section */
 .editor-section {
     flex: 1;
     display: flex;

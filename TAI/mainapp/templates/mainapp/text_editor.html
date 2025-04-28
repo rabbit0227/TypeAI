@@ -1,10 +1,9 @@
 {% extends 'mainapp/base.html' %}
-{% block title %}Text Editor{% endblock %}
-{% block extra_head %}
-    <script src="https://unpkg.com/typo-js@1.2.4/typo.js"></script>
-{% endblock %}
+{% load static %}
+{% block title %}Text editor{% endblock %}
 {% block content %}
-<div class="content-container">
+<script src="https://unpkg.com/typo-js@1.2.4/typo.js"></script>
+<div class="editor-content-container">
     <!-- Left Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-top">
@@ -64,7 +63,5 @@
 
 <!-- Bottom Bar (Diff Area) -->
 <div class="bottom-bar" id="diffArea" style="display: none;"></div>
-{% endblock %}
-{% block extra_scripts %}
-    <script src="{% static 'js/fileJS.js' %}"></script>
+<script src="{% static 'js/fileJS.js' %}"></script>
 {% endblock %}

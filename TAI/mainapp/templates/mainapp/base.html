@@ -41,7 +41,11 @@
                         <img src="{% static 'media/user.jpg' %}" alt="User" class="user-pic">
                         <div class="dropdown-menu" id="userDropdown">
                             <button class="dropdown-item" onclick="window.location.href='{% url 'settings' %}'">Settings</button>
-                            <button class="dropdown-item" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button class="dropdown-item">Logout</button>
+                            </form>
+                            
                         </div>
                     </div>
                 {% endif %}
