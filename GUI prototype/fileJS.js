@@ -317,7 +317,7 @@ async function shareText() {
     }
 }
 
-// Save text to localStorage
+// Save text to localStorage TODO: EDIT THIS
 function saveText() {
     localStorage.setItem('savedText', elements.editor.value);
     addLogEntry('Text saved');

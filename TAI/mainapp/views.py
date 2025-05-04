@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages  # Allows sending user-friendly messages
-from .forms import SignUpForm
-from .models import UserProfile
+from .forms import SignUpForm, DocumentCreateForm
+from .models import UserProfile, Document
+
 
 # Create your views here.
 # Home view (landing page)
@@ -25,11 +26,18 @@ def sign_up(request):
 # experiance section
 @login_required
 def dashboard(request):
-    return render(request, 'mainapp/dashboard.html')
+    users_documents = Document.objects.filter(user=request.user)
+    return render(request, 'mainapp/dashboard.html', { 'documents' : users_documents})
 
 @login_required
-def text_editor(request):
-    return render(request, 'mainapp/text_editor.html')
+def text_editor(request, pk = None):
+    if(pk == None):
+        return render(request, 'mainapp/text_editor.html')
+    else:
+        doc = get_object_or_404(Document, pk=pk, user=request.user)
+    return render(request, 'mainapp/text_editor.html', {
+        'document': doc
+        })
 
 @login_required
 def settings(request):
@@ -38,3 +46,39 @@ def settings(request):
         return redirect('settings')
     return render(request, 'mainapp/settings.html')
 
+'''
+Creation post reques. DocumentCreateForm Is used to create the Docuement which will be created in the db
+I had Gpt help me make this so idk why that else block is there (likley to call the form)
+From my understanding, create_document is called when the new document page is loaded (GET), Then do stuff for POST
+'''
+
+@login_required
+def create_document(request):
+    if request.method == 'POST':
+        form = DocumentCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            title   = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+            uploaded = form.cleaned_data['file']
+            
+            # if they uploaded a .txt file, read it
+            if uploaded:
+                try:
+                    content = uploaded.read().decode('utf-8')
+                except UnicodeDecodeError:
+                    content = uploaded.read().decode('latin-1')
+            
+            # finally save the Document
+            doc = Document.objects.create(
+                title=title,
+                content=content,
+                user=request.user
+            )
+            # redirect into the editor for this doc
+            return redirect('text_editor', pk=doc.pk)
+    else:
+        form = DocumentCreateForm()
+    
+    return render(request, 'mainapp/create_document.html', {
+        'form': form
+    })

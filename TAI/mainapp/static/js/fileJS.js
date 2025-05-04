@@ -5,21 +5,23 @@ const dictionary = new Typo('en_US', false, false, {
 
 // Cache DOM elements
 const elements = {
-    editor: document.getElementById('editor'),
-    correctionsArea: document.getElementById('correctionsArea'),
-    showCorrectedBtn: document.getElementById('showCorrectedBtn'),
-    diffArea: document.getElementById('diffArea'),
-    updateBtn: document.getElementById('updateBtn'),
-    showWrongBtn: document.getElementById('showWrongBtn'),
-    confirmationButtons: document.getElementById('confirmationButtons'),
-    activityLog: document.getElementById('activityLog'),
-    themeToggleBtn: document.getElementById('themeToggleBtn'),
-    userPic: document.querySelector('.user-pic'),
-    userDropdown: document.getElementById('userDropdown'),
-    availableTokens: document.getElementById('availableTokens'),
-    usedTokens: document.getElementById('usedTokens'),
-    hamburgerBtn: document.getElementById('hamburgerBtn'),
-    navLinks: document.getElementById('navLinks')
+    editor:                 document.getElementById('editor'),
+    correctionsArea:        document.getElementById('correctionsArea'),
+    showCorrectedBtn:       document.getElementById('showCorrectedBtn'),
+    diffArea:               document.getElementById('diffArea'),
+    updateBtn:              document.getElementById('updateBtn'),
+    showWrongBtn:           document.getElementById('showWrongBtn'),
+    confirmationButtons:    document.getElementById('confirmationButtons'),
+    activityLog:            document.getElementById('activityLog'),
+    themeToggleBtn:         document.getElementById('themeToggleBtn'),
+    userPic:                document.querySelector('.user-pic'),
+    userDropdown:           document.getElementById('userDropdown'),
+    availableTokens:        document.getElementById('availableTokens'),
+    usedTokens:             document.getElementById('usedTokens'),
+    hamburgerBtn:           document.getElementById('hamburgerBtn'),
+    navLinks:               document.getElementById('navLinks'),
+    updateFromDbBtn:        document.getElementById('updateFileBtn'),
+    saveToDbBtn:            document.getElementById('saveBtn')
 };
 
 // State management
@@ -357,6 +359,42 @@ const handleInput = debounce(() => {
     updateTokenCount();
 }, 300);
 
+/**
+ * Read the editor text and POST it to the Django API,
+ * then update the “Last Saved” timestamp in the UI.
+ * 
+ * BAD FUNCTIONALITY REMEMBER TO FIX THIS FETCH OK???
+ * 
+ * TODO: Impliment Collaborator to update this function properly for warnings
+ */
+async function storeToDB() {
+    const content = elements.editor.value;
+    try {
+      const res = await fetch(`/api/docs/${DOCUMENT_ID}/update/`, {
+        method: 'POST',
+        credentials: 'same-origin',             // include cookies
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),// use your CSRF helper
+        },
+        body: JSON.stringify({ content }),
+      });
+  
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const data = await res.json();
+      
+      // reflect the new timestamp
+      elements.lastSaved.textContent =
+        'Last Saved: ' + new Date(data.last_saved).toLocaleString();
+      addLogEntry('Saved to DB');
+      alert('Document saved successfully!');
+    } catch (err) {
+      console.error('Save failed', err);
+      alert(`Error saving document: ${err.message}`);
+    }
+  }
+  
+
 // Event listeners
 elements.editor.addEventListener('input', handleInput);
 elements.themeToggleBtn.addEventListener('click', () => {
@@ -374,6 +412,10 @@ elements.hamburgerBtn.addEventListener('click', () => {
     elements.navLinks.classList.toggle('active');
     elements.hamburgerBtn.classList.toggle('active');
 });
+
+elements.updateFromDbBtn.addEventListener('click', updateFromFile)
+elements.saveToDbBtn.addEventListener('click', storeToDB)
+
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (e) => {
