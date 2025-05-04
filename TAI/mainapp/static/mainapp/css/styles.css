@@ -125,6 +125,7 @@ body.dark-theme .nav-link:hover {
     background: none;
     border: none;
     cursor: pointer;
+    gap: 5px;
 }
 
 .hamburger span {

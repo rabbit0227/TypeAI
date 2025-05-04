@@ -1,23 +1,23 @@
 {% extends 'mainapp/base.html' %}
-{% load static %}
 {% block title %}Text editor{% endblock %}
 {% block content %}
+{% load static %}
 <script src="https://unpkg.com/typo-js@1.2.4/typo.js"></script>
 <div class="editor-content-container">
     <!-- Left Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-top">
             <button class="sidebar-button" id="updateFileBtn" onclick="updateFromFile()" title="Update from File">
-                <img class="icon" src="{% static 'media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
+                <img class="icon" src="{% static 'mainapp/media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
             </button>
             <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
-                <img class="icon" src="{% static 'media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
+                <img class="icon" src="{% static 'mainapp/media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
             </button>
             <button class="sidebar-button" id="saveBtn" onclick="saveText()" title="Save">
-                <img class="icon" src="{% static 'media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
+                <img class="icon" src="{% static 'mainapp/media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
             </button>
             <button class="sidebar-button" id="addCollaboratorBtn" onclick="addCollaborator()" title="Add Collaborator">
-                <img class="icon" src="{% static 'media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
+                <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
             </button>
         </div>
         <div class="sidebar-bottom">
@@ -63,5 +63,5 @@
 
 <!-- Bottom Bar (Diff Area) -->
 <div class="bottom-bar" id="diffArea" style="display: none;"></div>
-<script src="{% static 'js/fileJS.js' %}"></script>
+<!-- <script src="{% static 'mainapp/js/fileJS.js' %}"></script> -->
 {% endblock %}

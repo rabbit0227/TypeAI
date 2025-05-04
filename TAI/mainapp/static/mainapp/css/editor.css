@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Editor Component
+   ========================================================================== */
+
+   .editor-sectionuzzy {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow: auto;
+}
+
+.top-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.token-bar {
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px var(--shadow-light);
+}
+
+body.dark-theme .token-bar {
+    background: #1f2a44;
+    box-shadow: 0 3px 12px var(--shadow-dark);
+}
+
+#availableTokens, #usedTokens, #lastSaved {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+body.dark-theme #availableTokens,
+body.dark-theme #usedTokens,
+body.dark-theme #lastSaved {
+    color: var(--text-dark);
+}
+
+.toolbar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    background: #fff;
+    padding: 0.75rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px var(--shadow-light);
+}
+
+body.dark-theme .toolbar {
+    background: #1f2a44;
+    box-shadow: 0 3px 12px var(--shadow-dark);
+}
+
+.toolbar button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toolbar button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+#spellCheckBtn { background: var(--btn-spellcheck); }
+#showWrongBtn { background: var(--btn-wrong); }
+#showCorrectedBtn { background: var(--btn-corrected); }
+#updateBtn, #confirmUpdateBtn { background: var(--btn-update); }
+#cancelUpdateBtn { background: var(--btn-cancel); }
+
+body.dark-theme .toolbar button {
+    background: #2c548d;
+}
+
+.toolbar button:hover {
+    background: #64738f;
+}
+
+.editor-area {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+.textarea-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.textarea-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-theme .textarea-title {
+    color: var(--text-dark);
+}
+
+textarea {
+    width: 100%;
+    height: 400px;
+    padding: 1rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    resize: none;
+    background: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: inset 0 2px 8px var(--shadow-light);
+}
+
+textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+
+body.dark-theme textarea {
+    background: #1f2a44;
+    border-color: var(--border-dark);
+    color: var(--text-light);
+}
+
+#correctionsArea {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: inset 0 2px 8px var(--shadow-light);
+}
+
+body.dark-theme #correctionsArea {
+    background: #374151;
+}
+
+#correctionsArea:empty::before {
+    content: "Click 'Check Spelling' to see corrections.";
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.bottom-bar {
+    background: #f9fafb;
+    border-top: 1px solid var(--border-light);
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 12px 12px;
+}
+
+body.dark-theme .bottom-bar {
+    background: #374151;
+    border-top: 1px solid var(--border-dark);
+}
+
+.bottom-bar table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bottom-bar td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+}

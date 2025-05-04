@@ -32,9 +32,9 @@ def text_editor(request):
     return render(request, 'mainapp/text_editor.html')
 
 @login_required
-def settings(request):
+def user_settings(request):
     if request.method == 'POST':
         # Handle settings update
-        return redirect('settings')
-    return render(request, 'mainapp/settings.html')
+        return redirect('user-settings')
+    return render(request, 'mainapp/user_settings.html')
 

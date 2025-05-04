@@ -3,7 +3,7 @@
 {% block content %}
 <div class="settings-container">
     <h2>Settings</h2>
-    <form method="post" action="{% url 'settings' %}">
+    <form method="post" action="{% url 'user-settings' %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="email">Email</label>
