@@ -21,7 +21,8 @@ const elements = {
     hamburgerBtn:           document.getElementById('hamburgerBtn'),
     navLinks:               document.getElementById('navLinks'),
     updateFromDbBtn:        document.getElementById('updateFileBtn'),
-    saveToDbBtn:            document.getElementById('saveBtn')
+    saveToDbBtn:            document.getElementById('saveBtn'),
+    lastSaved:              document.getElementById('lastSaved'),
 };
 
 // State management
@@ -367,10 +368,34 @@ const handleInput = debounce(() => {
  * 
  * TODO: Impliment Collaborator to update this function properly for warnings
  */
+
+/*
+Anthony changes
+added getcookie function
+
+
+*/
+
+// Helper to get a cookie by name
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 async function storeToDB() {
     const content = elements.editor.value;
     try {
-      const res = await fetch(`/api/docs/${DOCUMENT_ID}/update/`, {
+      const res = await fetch(`/api/docs/${DOCUMENT_ID}/save/`, {
         method: 'POST',
         credentials: 'same-origin',             // include cookies
         headers: {
@@ -385,7 +410,7 @@ async function storeToDB() {
       
       // reflect the new timestamp
       elements.lastSaved.textContent =
-        'Last Saved: ' + new Date(data.last_saved).toLocaleString();
+        'Last Saved: ' + new Date(data.latest_update).toLocaleString();
       addLogEntry('Saved to DB');
       alert('Document saved successfully!');
     } catch (err) {

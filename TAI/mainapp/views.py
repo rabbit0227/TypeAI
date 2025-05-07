@@ -1,7 +1,9 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages  # Allows sending user-friendly messages
+from django.http import JsonResponse
 from .forms import SignUpForm, DocumentCreateForm
 from .models import UserProfile, Document
 
@@ -82,3 +84,33 @@ def create_document(request):
     return render(request, 'mainapp/create_document.html', {
         'form': form
     })
+
+'''
+Anthony
+-added import json (line 1) to use since storeToDB used 'Content-Type': 'application/json',
+-added save_document to save the text when editing after initial creation of text.
+'''
+
+
+@login_required
+def save_document(request, pk):
+    if request.method == 'POST':
+        try:
+            doc = get_object_or_404(Document, pk=pk, user=request.user)
+            data = json.loads(request.body)
+            content = data.get('content')
+            if content is not None:
+                doc.content = content
+                doc.save()
+                return JsonResponse({
+                    'message': 'Text saved successfully!',
+                    'latest_update': doc.latest_update.isoformat()
+                })
+            return JsonResponse({'error': 'No content provided'}, status=400)
+        except Document.DoesNotExist:
+            return JsonResponse({'error': 'Document not found'}, status=404)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            raise  # Re-raise the exception to see the full traceback in the server logs
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

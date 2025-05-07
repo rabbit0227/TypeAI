@@ -68,5 +68,16 @@
 
 <!-- Bottom Bar (Diff Area) -->
 <div class="bottom-bar" id="diffArea" style="display: none;"></div>
+
+<!-- Anthony
+Pass Document ID to  Javascript
+to fix: error  DOCUMENT_ID is not defined after using Save To DB button
+-->
+{% if document %}
+    <script>
+        const DOCUMENT_ID = {{ document.pk }};
+    </script>
+{% endif %}
+
 <script src="{% static 'js/fileJS.js' %}"></script>
 {% endblock %}
