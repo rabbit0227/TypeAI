@@ -1,0 +1,210 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block title %}Inbox | TypeAI{% endblock %}
+
+{% block extra_head %}
+<!-- placement and color, should move to css as a style and import but I dont have any experience in that-->
+<style>
+    .inbox-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .inbox-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .inbox-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .inbox-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+    }
+    
+    .inbox-tab.active {
+        border-bottom: 2px solid #3498db;
+        font-weight: bold;
+    }
+    
+    .inbox-content {
+        display: none;
+    }
+    
+    .inbox-content.active {
+        display: block;
+    }
+    
+    .message-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .message-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s;
+    }
+    
+    .message-item:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .message-item.unread {
+        background-color: #f0f7ff;
+    }
+    
+    .message-sender {
+        font-weight: bold;
+        width: 25%;
+    }
+    
+    .message-subject {
+        width: 45%;
+    }
+    
+    .message-date {
+        width: 20%;
+        color: #777;
+        font-size: 0.9em;
+    }
+    
+    .message-actions {
+        width: 10%;
+        text-align: right;
+    }
+    
+    .compose-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .no-messages {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+    
+    .dark-theme .message-item:hover {
+        background-color: #2a2a2a;
+    }
+    
+    .dark-theme .message-item.unread {
+        background-color: #2d3748;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- make inbox title header, compose is on same level, can change if want, looks good to me tho-->
+<div class="inbox-container">
+    <div class="inbox-header">
+        <h1>Inbox</h1>
+        <a href="{% url 'send_message' %}" class="compose-btn">
+            <i class="fas fa-pen"></i> Compose
+        </a>
+    </div>
+    <!-- For received and how many messages are in each, was thinking of notifying if read but lazy...-->
+    <div class="inbox-tabs">
+        <div class="inbox-tab active" data-tab="received">
+            Received {% if unread_count %}<span class="badge">({{ unread_count }} unread)</span>{% endif %}
+        </div>
+        <div class="inbox-tab" data-tab="sent">Sent</div>
+    </div>
+    
+    <div class="inbox-content active" id="received-content">
+        {% if received_messages %}
+            <ul class="message-list">
+                {% for message in received_messages %}
+                <!-- give options for user to manage message, extend this to collab invite and complaints-->
+                    <li class="message-item {% if not message.is_read %}unread{% endif %}">
+                        <div class="message-sender">{{ message.sender.username }}</div>
+                        <div class="message-subject">
+                            <a href="{% url 'message_detail' message.id %}">{{ message.subject }}</a>
+                        </div>
+                        <!-- time really isn't needed for what we are doing but i was copying gmail, I mean referencing...-->
+                        <div class="message-date">{{ message.timestamp|date:"M d, Y" }}</div>
+                        <div class="message-actions">
+                            <a href="{% url 'delete_message' message.id %}" onclick="return confirm('Are you sure you want to delete this message?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-messages">
+                <p>No messages in your inbox</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- similar permissions for the sender-->
+    <div class="inbox-content" id="sent-content">
+        {% if sent_messages %}
+            <ul class="message-list">
+                {% for message in sent_messages %}
+                    <li class="message-item">
+                        <div class="message-sender">To: {{ message.recipient.username }}</div>
+                        <div class="message-subject">
+                            <a href="{% url 'message_detail' message.id %}">{{ message.subject }}</a>
+                        </div>
+                        <div class="message-date">{{ message.timestamp|date:"M d, Y" }}</div>
+                        <div class="message-actions">
+                            <a href="{% url 'delete_message' message.id %}" onclick="return confirm('Are you sure you want to delete this message?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-messages">
+                <p>No sent messages</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.inbox-tab');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content sections
+                document.querySelectorAll('.inbox-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the selected content section
+                const tabName = this.getAttribute('data-tab');
+                document.getElementById(tabName + '-content').classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}
