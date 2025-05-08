@@ -23,6 +23,8 @@ const elements = {
     updateFromDbBtn:        document.getElementById('updateFileBtn'),
     saveToDbBtn:            document.getElementById('saveBtn'),
     lastSaved:              document.getElementById('lastSaved'),
+    userMenu:               document.getElementById('userMenu'),
+    
 };
 
 // State management
@@ -250,23 +252,63 @@ function showUpdateConfirmation() {
 }
 
 // Update from file
+// async function updateFromFile() {
+//     try {
+//         const response = await fetch('newstuff.txt');
+//         if (!response.ok) throw new Error('File not found');
+//         const text = await response.text();
+//         state.correctedText = text;
+//         state.asteriskText = text;
+//         state.fullCorrectedText = text;
+//         state.updateSource = 'file';
+//         elements.correctionsArea.value = text;
+//         elements.showCorrectedBtn.style.display = 'none';
+//         elements.showWrongBtn.style.display = 'none';
+//         elements.updateBtn.style.display = 'inline-block';
+//         showUpdateConfirmation();
+//         addLogEntry('File updated');
+//     } catch (err) {
+//         alert(`Error loading file: ${err.message}`);
+//     }
+// }
+
 async function updateFromFile() {
+    console.log('updateFromFile called');
+    if (window.DOCUMENT_ID === null || window.DOCUMENT_ID === undefined) {
+        console.error('Cannot update: DOCUMENT_ID is not defined');
+        alert('Error updating document: Document ID is not defined');
+        return;
+    }
     try {
-        const response = await fetch('newstuff.txt');
-        if (!response.ok) throw new Error('File not found');
-        const text = await response.text();
+        const response = await fetch(`/api/docs/${DOCUMENT_ID}/`);
+        if (!response.ok) throw new Error(`Server responded ${response.status}`);
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        const text = data.content; // Extract content from JSON
         state.correctedText = text;
         state.asteriskText = text;
         state.fullCorrectedText = text;
         state.updateSource = 'file';
-        elements.correctionsArea.value = text;
-        elements.showCorrectedBtn.style.display = 'none';
-        elements.showWrongBtn.style.display = 'none';
-        elements.updateBtn.style.display = 'inline-block';
+        if (elements.correctionsArea) {
+            elements.correctionsArea.value = text;
+        } else {
+            console.error('Corrections area element not found');
+        }
+        if (elements.showCorrectedBtn) {
+            elements.showCorrectedBtn.style.display = 'none';
+        }
+        if (elements.showWrongBtn) {
+            elements.showWrongBtn.style.display = 'none';
+        }
+        if (elements.updateBtn) {
+            elements.updateBtn.style.display = 'inline-block';
+        }
         showUpdateConfirmation();
         addLogEntry('File updated');
+        alert('Document updated successfully!');
     } catch (err) {
-        alert(`Error loading file: ${err.message}`);
+        console.error('Update failed', err);
+        alert(`Error updating document: ${err.message}`);
     }
 }
 

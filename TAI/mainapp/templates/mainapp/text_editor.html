@@ -7,7 +7,7 @@
     <!-- Left Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-top">
-            <button class="sidebar-button" id="updateFileBtn" onclick="updateFromFile()" title="Update from File">
+            <button class="sidebar-button" id="updateFileBtn"  title="Update from File">
                 <img class="icon" src="{% static 'media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
             </button>
             <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
@@ -73,11 +73,39 @@
 Pass Document ID to  Javascript
 to fix: error  DOCUMENT_ID is not defined after using Save To DB button
 -->
-{% if document %}
+<!-- {% if document %}
     <script>
         const DOCUMENT_ID = {{ document.pk }};
     </script>
 {% endif %}
 
+{% if document %}
+    <script>
+        (function() {
+            console.log('Document PK:', {{ document.pk|default_if_none:"null" }});
+            const DOCUMENT_ID = {{ document.pk|default_if_none:"null" }};
+            if (DOCUMENT_ID === null) {
+                console.error('DOCUMENT_ID is null - document.pk was not provided');
+            }
+            window.DOCUMENT_ID = DOCUMENT_ID;
+        })();
+    </script>
+{% else %}
+    <script>
+        console.log('No document provided');
+        window.DOCUMENT_ID = null;
+    </script>
+{% endif %} -->
+
+
+<script>
+    // Define DOCUMENT_ID for storeToDB and window.DOCUMENT_ID for updateFromFile
+    const DOCUMENT_ID = 
+    {% if document %}{{ document.pk|default_if_none:"null" }}{% else %}null{% endif %};
+    window.DOCUMENT_ID = DOCUMENT_ID;
+    if (window.DOCUMENT_ID === null) {
+        console.warn('DOCUMENT_ID is null - no document provided');
+    }
+</script>
 <script src="{% static 'js/fileJS.js' %}"></script>
 {% endblock %}

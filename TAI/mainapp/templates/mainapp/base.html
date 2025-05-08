@@ -37,7 +37,7 @@
             </div>
             <div class="nav-right">
                 {% if user.is_authenticated %}
-                    <div class="user-menu">
+                    <div class="user-menu" id="userMenu">
                         <img src="{% static 'media/user.jpg' %}" alt="User" class="user-pic">
                         <div class="dropdown-menu" id="userDropdown">
                             <button class="dropdown-item" onclick="window.location.href='{% url 'settings' %}'">Settings</button>
@@ -50,6 +50,7 @@
                     </div>
                 {% endif %}
             </div>
+
         </nav>
 
         <!-- Main Content -->

@@ -31,15 +31,24 @@ def dashboard(request):
     users_documents = Document.objects.filter(user=request.user)
     return render(request, 'mainapp/dashboard.html', { 'documents' : users_documents})
 
+# @login_required
+# def text_editor(request, pk = None):
+#     if(pk == None):
+#         return render(request, 'mainapp/text_editor.html')
+#     else:
+#         doc = get_object_or_404(Document, pk=pk, user=request.user)
+#     return render(request, 'mainapp/text_editor.html', {
+#         'document': doc
+#         })
+
 @login_required
-def text_editor(request, pk = None):
-    if(pk == None):
-        return render(request, 'mainapp/text_editor.html')
+def text_editor(request, pk=None):
+    if pk is None:
+        doc = None
     else:
         doc = get_object_or_404(Document, pk=pk, user=request.user)
-    return render(request, 'mainapp/text_editor.html', {
-        'document': doc
-        })
+    return render(request, 'mainapp/text_editor.html', {'document': doc})
+
 
 @login_required
 def settings(request):
@@ -91,6 +100,23 @@ Anthony
 -added save_document to save the text when editing after initial creation of text.
 '''
 
+@login_required
+def get_document(request, pk):
+    print(f"get_document called: pk={pk}, user={request.user}, is_authenticated={request.user.is_authenticated}")
+    if request.method != 'GET':
+        print(f"Invalid request method: {request.method}")
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    try:
+        doc = get_object_or_404(Document, pk=pk, user=request.user)
+        return JsonResponse({
+            'id': doc.pk,
+            'title': doc.title,
+            'content': doc.content,
+            'created_at': doc.created_at.isoformat(),
+            'latest_update': doc.latest_update.isoformat()
+        })
+    except Document.DoesNotExist:
+        return JsonResponse({'error': 'File not found'}, status=404)
 
 @login_required
 def save_document(request, pk):
