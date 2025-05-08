@@ -18,7 +18,7 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username}'s profile"
+        return f"{self.associated_user.username}'s profile"
 # }
 
 class Document(models.Model):

@@ -20,7 +20,7 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('signin')
+            return redirect('sign_in')
     else:
         form = SignUpForm()
     return render(request, 'mainapp/sign_up.html', {'form': form})
