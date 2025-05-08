@@ -19,7 +19,7 @@ const elements = {
     availableTokens: document.getElementById('availableTokens'),
     usedTokens: document.getElementById('usedTokens'),
     hamburgerBtn: document.getElementById('hamburgerBtn'),
-    navLinks: document.getElementById('navLinks')
+    navLinks: document.getElementById('navLinks'),
 };
 
 // State management

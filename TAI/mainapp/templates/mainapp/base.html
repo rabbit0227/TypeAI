@@ -40,10 +40,11 @@
                 {% if user.is_authenticated %}
                     <!-- New Inbox Button -->
                     <!-- FOR FUTURE, change positioning of icon, looks kinda weird-->
-                    <a href="{% url 'inbox' %}" class="inbox-button" id="inboxBtn" title="Messages">
+                    <a href="{% url 'inbox' %}" class="inbox-button" id="inboxBtn" title="Messages" data-unread-url="{% url 'get_unread_count' %}">
                         <i class="fas fa-inbox"></i>
                         <span class="notification-badge" id="unreadBadge">0</span>
                     </a>
+                    <!-- Do not touch the url inboxing, this links to the js script -->
                     
                     <div class="user-menu">
                         <img src="{% static 'mainapp/media/user.jpg' %}" alt="User" class="user-pic">
@@ -69,38 +70,7 @@
 
     <script src="{% static 'mainapp/js/app.js' %}"></script>
 
-    <script>
-        // for inbox icon to signal any unread messages 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Function to update unread message count
-            function updateUnreadCount() {
-
-                const unreadBadge = document.getElementById('unreadBadge');
-                if (unreadBadge) {
-                    fetch('{% url "get_unread_count" %}')
-                        .then(response => response.json())
-                        .then(data => {
-                            const count = data.unread_count;
-                            unreadBadge.textContent = count;
-                            
-                            // Hide badge if no unread messages
-                            if (count <= 0) {
-                                unreadBadge.style.display = 'none';
-                            } else {
-                                unreadBadge.style.display = 'flex';
-                            }
-                        })
-                        .catch(error => console.error('Error fetching unread count:', error));
-                }
-            }
-            
-            // Update unread count on page load
-            updateUnreadCount();
-            
-            // Update unread count every 60 seconds, honestly can change to whatever
-            setInterval(updateUnreadCount, 60000);
-        });
-    </script>
+    <script src="{% static 'mainapp/js/inbox.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
 
     <footer>
