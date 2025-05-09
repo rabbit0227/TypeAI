@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import home_page, sign_up, dashboard, text_editor, settings, create_document, save_document, get_document
+from .views import home_page, sign_up, dashboard, text_editor, user_settings, create_document, save_document, get_document
 
 
 urlpatterns = [
@@ -10,7 +10,7 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     # We need to remove this in other HTML stuff
     path('text-editor/', text_editor, name='text_editor'),
-    path('settings/', settings, name='settings'),
+    path('settings/', user_settings, name='user_settings'),
     path('logout', LogoutView.as_view(), name="logout"),
     path('docs/new/', create_document, name='create_document'),
     path('docs/<int:pk>/edit/', text_editor,    name='text_editor'),

@@ -1,0 +1,24 @@
+/* CSS Variables */
+:root {
+    --text-primary: #1e293b;
+    --text-secondary: #4b5563;
+    --text-light: #e2e8f0;
+    --text-dark: #d1d5db;
+    --text-muted: #6b7280;
+    --accent-blue: #3b82f6;
+    --border-light: #d1d5db;
+    --border-dark: #213a5e;
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-dark: rgba(0, 0, 0, 0.3);
+    --gradient-light: linear-gradient(135deg, #e5e7eb 0%, #eef8ff 100%);
+    --gradient-dark: linear-gradient(135deg, #111827 0%, #212e46 100%);
+    --gradient-nav-light: linear-gradient(90deg, #fff 0%, #f9fafb 100%);
+    --gradient-nav-dark: linear-gradient(90deg, #1f2a44 0%, #213a5e 100%);
+    --btn-spellcheck: #7ba5e6;
+    --btn-wrong: #e6962a;
+    --btn-corrected: #c075e4;
+    --btn-update: #2da7d4;
+    --btn-cancel: #f87171;
+    --cta-primary: #3b82f6;
+    --cta-secondary: #6b7280;
+}

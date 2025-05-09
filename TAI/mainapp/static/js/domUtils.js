@@ -1,0 +1,22 @@
+// Cache DOM elements for efficient access
+const elements = {
+    editor:                 document.getElementById('editor'),
+    correctionsArea:        document.getElementById('correctionsArea'),
+    showCorrectedBtn:       document.getElementById('showCorrectedBtn'),
+    diffArea:               document.getElementById('diffArea'),
+    updateBtn:              document.getElementById('updateBtn'),
+    showWrongBtn:           document.getElementById('showWrongBtn'),
+    confirmationButtons:    document.getElementById('confirmationButtons'),
+    activityLog:            document.getElementById('activityLog'),
+    themeToggleBtn:         document.getElementById('themeToggleBtn'),
+    userPic:                document.querySelector('.user-pic'),
+    userDropdown:           document.getElementById('userDropdown'),
+    availableTokens:        document.getElementById('availableTokens'),
+    usedTokens:             document.getElementById('usedTokens'),
+    hamburgerBtn:           document.getElementById('hamburgerBtn'),
+    navLinks:               document.getElementById('navLinks'),
+    updateFromDbBtn:        document.getElementById('updateFileBtn'),
+    saveToDbBtn:            document.getElementById('saveBtn'),
+    lastSaved:              document.getElementById('lastSaved'),
+    userMenu:               document.getElementById('userMenu'),
+};

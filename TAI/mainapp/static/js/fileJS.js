@@ -251,26 +251,6 @@ function showUpdateConfirmation() {
     elements.updateBtn.style.display = 'none';
 }
 
-// Update from file
-// async function updateFromFile() {
-//     try {
-//         const response = await fetch('newstuff.txt');
-//         if (!response.ok) throw new Error('File not found');
-//         const text = await response.text();
-//         state.correctedText = text;
-//         state.asteriskText = text;
-//         state.fullCorrectedText = text;
-//         state.updateSource = 'file';
-//         elements.correctionsArea.value = text;
-//         elements.showCorrectedBtn.style.display = 'none';
-//         elements.showWrongBtn.style.display = 'none';
-//         elements.updateBtn.style.display = 'inline-block';
-//         showUpdateConfirmation();
-//         addLogEntry('File updated');
-//     } catch (err) {
-//         alert(`Error loading file: ${err.message}`);
-//     }
-// }
 
 async function updateFromFile() {
     console.log('updateFromFile called');
@@ -402,21 +382,7 @@ const handleInput = debounce(() => {
     updateTokenCount();
 }, 300);
 
-/**
- * Read the editor text and POST it to the Django API,
- * then update the “Last Saved” timestamp in the UI.
- * 
- * BAD FUNCTIONALITY REMEMBER TO FIX THIS FETCH OK???
- * 
- * TODO: Impliment Collaborator to update this function properly for warnings
- */
 
-/*
-Anthony changes
-added getcookie function
-
-
-*/
 
 // Helper to get a cookie by name
 function getCookie(name) {

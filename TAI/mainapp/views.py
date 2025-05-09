@@ -51,7 +51,7 @@ def text_editor(request, pk=None):
 
 
 @login_required
-def settings(request):
+def user_settings(request):
     if request.method == 'POST':
         # Handle settings update
         return redirect('settings')

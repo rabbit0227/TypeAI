@@ -1,0 +1,83 @@
+/* User Menu */
+.user-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    cursor: pointer;
+}
+
+body.dark-theme .user-pic {
+    border-color: var(--border-dark);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 4px 12px var(--shadow-dark);
+    border-radius: 10px;
+    min-width: 120px;
+}
+
+body.dark-theme .dropdown-menu {
+    background: #374151;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+body.dark-theme .dropdown-item {
+    color: var(--text-dark);
+}
+
+.dropdown-item:hover {
+    background: #dbeafe;
+    color: var(--accent-blue);
+}
+
+body.dark-theme .dropdown-item:hover {
+    background: #374151;
+}
+
+#themeToggleBtn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+body.dark-theme #themeToggleBtn {
+    color: var(--text-dark);
+}
+
+#themeToggleBtn:hover {
+    background: #dbeafe;
+    color: var(--accent-blue);
+}
+
+body.dark-theme #themeToggleBtn:hover {
+    background: #374151;
+}
