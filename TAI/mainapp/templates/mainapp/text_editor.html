@@ -1,7 +1,7 @@
 {% extends 'mainapp/base.html' %}
-{% load static %}
 {% block title %}Text editor{% endblock %}
 {% block content %}
+{% load static %}
 <script src="https://unpkg.com/typo-js@1.2.4/typo.js"></script>
 <div class="editor-content-container">
     <!-- Left Sidebar -->
@@ -11,13 +11,13 @@
                 <img class="icon" src="{% static 'media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
             </button>
             <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
-                <img class="icon" src="{% static 'media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
+                <img class="icon" src="{% static 'mainapp/media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
             </button>
             <button class="sidebar-button" id="saveBtn" onclick="saveText()" title="Save">
-                <img class="icon" src="{% static 'media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
+                <img class="icon" src="{% static 'mainapp/media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
             </button>
             <button class="sidebar-button" id="addCollaboratorBtn" onclick="addCollaborator()" title="Add Collaborator">
-                <img class="icon" src="{% static 'media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
+                <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
             </button>
         </div>
         <div class="sidebar-bottom">
@@ -108,14 +108,14 @@ to fix: error  DOCUMENT_ID is not defined after using Save To DB button
     }
 </script>
 <!-- <script src="{% static 'js/fileJS.js' %}"></script> -->
-<script src="{% static 'js/init.js' %}"></script>
-<script src="{% static 'js/domUtils.js' %}"></script>
-<script src="{% static 'js/state.js' %}"></script>
-<script src="{% static 'js/utils.js' %}"></script>
-<script src="{% static 'js/spelling.js' %}"></script>
-<script src="{% static 'js/ui.js' %}"></script>
-<script src="{% static 'js/database.js' %}"></script>
-<script src="{% static 'js/userActions.js' %}"></script>
-<script src="{% static 'js/events.js' %}"></script>
+<script src="{% static 'mainapp/js/init.js' %}"></script>
+<script src="{% static 'mainapp/js/domUtils.js' %}"></script>
+<script src="{% static 'mainapp/js/state.js' %}"></script>
+<script src="{% static 'mainapp/js/utils.js' %}"></script>
+<script src="{% static 'mainapp/js/spelling.js' %}"></script>
+<script src="{% static 'mainapp/js/ui.js' %}"></script>
+<script src="{% static 'mainapp/js/database.js' %}"></script>
+<script src="{% static 'mainapp/js/userActions.js' %}"></script>
+<script src="{% static 'mainapp/js/events.js' %}"></script>
 
 {% endblock %}

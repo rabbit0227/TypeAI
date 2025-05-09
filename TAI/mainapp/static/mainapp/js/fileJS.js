@@ -5,6 +5,7 @@ const dictionary = new Typo('en_US', false, false, {
 
 // Cache DOM elements
 const elements = {
+<<<<<<< HEAD:TAI/mainapp/static/js/fileJS.js
     editor:                 document.getElementById('editor'),
     correctionsArea:        document.getElementById('correctionsArea'),
     showCorrectedBtn:       document.getElementById('showCorrectedBtn'),
@@ -25,6 +26,23 @@ const elements = {
     lastSaved:              document.getElementById('lastSaved'),
     userMenu:               document.getElementById('userMenu'),
     
+=======
+    editor: document.getElementById('editor'),
+    correctionsArea: document.getElementById('correctionsArea'),
+    showCorrectedBtn: document.getElementById('showCorrectedBtn'),
+    diffArea: document.getElementById('diffArea'),
+    updateBtn: document.getElementById('updateBtn'),
+    showWrongBtn: document.getElementById('showWrongBtn'),
+    confirmationButtons: document.getElementById('confirmationButtons'),
+    activityLog: document.getElementById('activityLog'),
+    themeToggleBtn: document.getElementById('themeToggleBtn'),
+    userPic: document.querySelector('.user-pic'),
+    userDropdown: document.getElementById('userDropdown'),
+    availableTokens: document.getElementById('availableTokens'),
+    usedTokens: document.getElementById('usedTokens'),
+    hamburgerBtn: document.getElementById('hamburgerBtn'),
+    navLinks: document.getElementById('navLinks'),
+>>>>>>> 613ec97aa3a2d9ee5d6e02e4b94164266db7edf2:TAI/mainapp/static/mainapp/js/fileJS.js
 };
 
 // State management

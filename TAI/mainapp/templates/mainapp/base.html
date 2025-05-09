@@ -5,16 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TypeAI{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/user-menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
-    <link rel="stylesheet" href="{% static 'css/showcase.css' %}">
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/editor.css' %}">
-    <link rel="stylesheet" href="{% static 'css/scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/user-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/showcase.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/editor.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/scrollbar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -22,7 +23,7 @@
         <!-- Top Navbar -->
         <nav class="navbar">
             <div class="nav-left">
-                <img src="{% static 'media/logo.svg' %}" alt="Logo" class="logo">
+                <img src="{% static 'mainapp/media/logo.svg' %}" alt="Logo" class="logo">
             </div>
             <div class="nav-center">
                 <button class="hamburger" id="hamburgerBtn">
@@ -46,8 +47,15 @@
             </div>
             <div class="nav-right">
                 {% if user.is_authenticated %}
+                    <!-- New Inbox Button -->
+                    <!-- FOR FUTURE, change positioning of icon, looks kinda weird-->
+                    <a href="{% url 'inbox' %}" class="inbox-button" id="inboxBtn" title="Messages" data-unread-url="{% url 'get_unread_count' %}">
+                        <i class="fas fa-inbox"></i>
+                        <span class="notification-badge" id="unreadBadge">0</span>
+                    </a>
+                    <!-- Do not touch the url inboxing, this links to the js script -->
                     <div class="user-menu" id="userMenu">
-                        <img src="{% static 'media/user.jpg' %}" alt="User" class="user-pic">
+                        <img src="{% static 'mainapp/media/user.jpg' %}" alt="User" class="user-pic">
                         <div class="dropdown-menu" id="userDropdown">
                             <button class="dropdown-item" onclick="window.location.href='{% url 'user_settings' %}'">Settings</button>
                             <form action="{% url 'logout' %}" method="post">
@@ -69,7 +77,8 @@
         </div>
     </div>
 
-    <script src="{% static 'js/site-ui-base.js' %}"></script>
+    <script src="{% static 'mainapp/js/site-ui-base.js' %}"></script>
+    <script src="{% static 'mainapp/js/inbox.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
 
     <footer>

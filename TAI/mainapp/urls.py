@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import home_page, sign_up, dashboard, text_editor, user_settings, create_document, save_document, get_document
-
+from .views import home_page, sign_up, dashboard, text_editor, user_settings
+from .views import create_document, save_document, get_document
+from .views import inbox, message_detail, send_message, delete_message, get_unread_count
 
 urlpatterns = [
     path('', home_page, name='home-page'),
@@ -16,5 +17,12 @@ urlpatterns = [
     path('docs/<int:pk>/edit/', text_editor,    name='text_editor'),
     path('api/docs/<int:pk>/', get_document, name='get_document'),
     path('api/docs/<int:pk>/save/', save_document, name='save_document'),
+    
+    # Inbox URLs, names are subject to change in further design
+    path('inbox/', inbox, name='inbox'),
+    path('inbox/message/<int:message_id>/', message_detail, name='message_detail'),
+    path('inbox/compose/', send_message, name='send_message'),
+    path('inbox/delete/<int:message_id>/', delete_message, name='delete_message'),
+    path('inbox/unread-count/', get_unread_count, name='get_unread_count'),
 ]
 

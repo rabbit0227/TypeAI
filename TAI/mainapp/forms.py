@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Document
+from .models import UserProfile, Document, Message
 
 class SignUpForm(UserCreationForm):
     
@@ -32,3 +32,16 @@ class DocumentCreateForm(forms.Form):
         help_text="…or upload a .txt file"
     )  
 
+class MessageForm(forms.ModelForm):
+    recipient = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        label="To"
+    )
+    
+    class Meta:
+        model = Message
+        fields = ['recipient', 'subject', 'content']
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        }
