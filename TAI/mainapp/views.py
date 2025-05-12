@@ -38,3 +38,12 @@ def user_settings(request):
         return redirect('user-settings')
     return render(request, 'mainapp/user_settings.html')
 
+@login_required
+def tokens(request):
+    return render(request, 'mainapp/tokens.html')
+
+@login_required
+def cart(request):
+    return render(request, 'mainapp/cart.html')
+
+"""function to load """

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import home_page, sign_up, dashboard, text_editor, user_settings
+from .views import *
 
 urlpatterns = [
     path('', home_page, name='home-page'),
@@ -10,5 +10,7 @@ urlpatterns = [
     path('text-editor/', text_editor, name='text_editor'),
     path('user-settings/', user_settings, name='user-settings'),
     path('logout', LogoutView.as_view(), name="logout"),
+    path('tokens/', tokens, name='tokens_landing'),
+    path('cart/', cart, name='payment_cart')
 ]
 

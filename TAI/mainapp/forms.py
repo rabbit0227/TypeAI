@@ -18,5 +18,9 @@ class SignUpForm(UserCreationForm):
         profile.save()
 
         return user
-    
 
+"""
+Forms I think I'll need:
+Form that'll handle orders and credit/debit card saves as well as updating DB to paid user
+Form that'll push to db the updated tokens amount
+"""

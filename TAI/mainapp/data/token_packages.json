@@ -1,0 +1,32 @@
+[
+    {
+        "name" : "option1",
+        "price" : 4.99,
+        "token_value" : 70,
+        "BV" : false
+    },
+    {
+        "name" : "option2",
+        "price" : 9.99,
+        "token_value" : 370,
+        "BV" : false 
+    },
+    {
+        "name" : "option3",
+        "price" : 19.99,
+        "token_value" : 1200,
+        "BV" : false
+    },
+    {
+        "name" : "option4",
+        "price" : 50.0,
+        "token_value" : 3190,
+        "BV" : false
+    },
+    {
+        "name" : "option5",
+        "price" : 100.0,
+        "token_value" : 7360,
+        "BV" : true
+    }
+]

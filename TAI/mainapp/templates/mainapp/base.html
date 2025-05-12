@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TypeAI{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'mainapp/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'mainapp/css/token-shop.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -25,6 +26,7 @@
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
                         <a href="{% url 'text_editor' %}" class="nav-link">Text Editor</a>
+                        <a href="{% url 'tokens_landing' %}"class="nav-link">Buy Tokens</a>
                         <a href="{% url 'user-settings' %}" class="nav-link">Settings</a>
                         <button id="themeToggleBtn">Toggle Theme</button>
                     {% else %}
