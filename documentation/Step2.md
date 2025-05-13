@@ -6,6 +6,7 @@ This documentation is for the Second steps to develop in the project for any use
 
 ## Django Development Guide
 
+<<<<<<< HEAD
 
 
 ### 1. Apps
@@ -20,6 +21,16 @@ This documentation is for the Second steps to develop in the project for any use
 
 ``` bash
 python TypeAI_djn/manage.py startapp myapp
+=======
+### 0. Apps
+<<<<<<< HEAD
+```
+=======
+
+``` bash
+>>>>>>> origin
+python manage.py startapp myapp
+>>>>>>> d0958f258aba6664357b4512066a6489e812bb15
 ```
 2. Add the app to (`TypeAI_djn/settings.py`):
 

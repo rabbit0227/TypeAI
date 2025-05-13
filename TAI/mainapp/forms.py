@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Document, Message
+from .models import UserProfile, Document, Message, Card
 
 class SignUpForm(UserCreationForm):
     
@@ -45,3 +45,12 @@ class MessageForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }
+
+class BankInfoForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = ['card_number','cvv','expiry','cardholder_name']
+        widgets = {
+            'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
+        }
+
