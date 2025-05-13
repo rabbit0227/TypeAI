@@ -1,15 +1,69 @@
 {% extends 'mainapp/base.html' %}
+{% load static %}
 {% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+<link rel ="stylesheet" href = "{% static 'mainapp\css\dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
     <h2>Welcome, {{ user.username }}!</h2>
     <p>This is your dashboard. Access your documents and settings from the navigation bar.</p>
+    
     <div class="dashboard-actions">
         <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a>
         <a href="{% url 'user_settings' %}" class="cta-button">Manage Settings</a>
-        <!-- Create a document through here-->
         <a href="{% url 'create_document' %}" class="cta-button">➕ New Document</a>
     </div>
+
+    <div class="documents-container">
+        <!-- Your owned documents -->
+        <section class="doc-section owned-docs">
+            <h3>Your Documents</h3>
+            <ul class="doc-list">
+                {% for doc in owned_documents %}
+                <li class="doc-item">
+                    <div class="doc-info">
+                        <a href="{% url 'text_editor' doc.pk %}" class="doc-title">
+                            {{ doc.title }}
+                        </a>
+                        <div class="doc-meta">
+                            <span class="doc-date">Created: {{ doc.created_at|date:"M j, Y" }}</span>
+                            <span class="doc-owner">Owner: You</span>
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="empty-docs">You haven't created any documents yet.</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Documents you're collaborating on -->
+        <section class="doc-section collab-docs">
+            <h3>Shared With You</h3>
+            <ul class="doc-list">
+                {% for collab in collaborations %}
+                <li class="doc-item">
+                    <div class="doc-info">
+                        <a href="{% url 'text_editor' collab.document.pk %}" class="doc-title">
+                            {{ collab.document.title }}
+                        </a>
+                        <div class="doc-meta">
+                            <span class="doc-date">Added: {{ collab.added_at|date:"M j, Y" }}</span>
+                            <span class="doc-owner">Owner: {{ collab.document.user.username }}</span>
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="empty-docs">No shared documents.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</div>
+{% endblock %}
 
 
     <!-- Very bare bones. For now only takes in document data from db
@@ -19,22 +73,3 @@
         3. Need to display who the owner is (must impliment the Collaborator table)
         4. 
     -->
-    <section class="your-docs">
-        <h3>Your Documents</h3>
-        <ul class="doc-list">
-          {% for doc in documents %}
-            <li>
-              <a href="{% url 'text_editor' doc.pk %}">
-                {{ doc.title }}
-              </a>
-              <small class="text-muted">
-                &mdash; created {{ doc.created_at|date:"M j, Y" }}
-              </small>
-            </li>
-          {% empty %}
-            <li>You have no documents yet.</li>
-          {% endfor %}
-        </ul>
-      </section>
-</div>
-{% endblock %}
