@@ -2,13 +2,14 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.contrib import messages  # Allows sending user-friendly messages
 from django.http import JsonResponse
 from .forms import SignUpForm, DocumentCreateForm
 from .models import UserProfile, Document, Collaborator, User, Blacklist
 
 from django.utils import timezone
-from .forms import MessageForm
+from .forms import MessageForm, CustomAuthenticationForm
 from .models import Message
 
 # Create your views here.
@@ -28,7 +29,12 @@ def sign_up(request):
     return render(request, 'mainapp/sign_up.html', {'form': form})
 
 # experience section
-@login_required
+
+class CustomLoginView(LoginView):
+    form_class = CustomAuthenticationForm
+    template_name = 'mainapp/sign_in.html'  # Adjust to your template path
+    
+
 @login_required
 def dashboard(request):
     # Get documents created by the user
