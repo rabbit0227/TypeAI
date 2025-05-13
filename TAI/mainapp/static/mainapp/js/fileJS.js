@@ -5,6 +5,28 @@ const dictionary = new Typo('en_US', false, false, {
 
 // Cache DOM elements
 const elements = {
+<<<<<<< HEAD:TAI/mainapp/static/js/fileJS.js
+    editor:                 document.getElementById('editor'),
+    correctionsArea:        document.getElementById('correctionsArea'),
+    showCorrectedBtn:       document.getElementById('showCorrectedBtn'),
+    diffArea:               document.getElementById('diffArea'),
+    updateBtn:              document.getElementById('updateBtn'),
+    showWrongBtn:           document.getElementById('showWrongBtn'),
+    confirmationButtons:    document.getElementById('confirmationButtons'),
+    activityLog:            document.getElementById('activityLog'),
+    themeToggleBtn:         document.getElementById('themeToggleBtn'),
+    userPic:                document.querySelector('.user-pic'),
+    userDropdown:           document.getElementById('userDropdown'),
+    availableTokens:        document.getElementById('availableTokens'),
+    usedTokens:             document.getElementById('usedTokens'),
+    hamburgerBtn:           document.getElementById('hamburgerBtn'),
+    navLinks:               document.getElementById('navLinks'),
+    updateFromDbBtn:        document.getElementById('updateFileBtn'),
+    saveToDbBtn:            document.getElementById('saveBtn'),
+    lastSaved:              document.getElementById('lastSaved'),
+    userMenu:               document.getElementById('userMenu'),
+    
+=======
     editor: document.getElementById('editor'),
     correctionsArea: document.getElementById('correctionsArea'),
     showCorrectedBtn: document.getElementById('showCorrectedBtn'),
@@ -19,7 +41,8 @@ const elements = {
     availableTokens: document.getElementById('availableTokens'),
     usedTokens: document.getElementById('usedTokens'),
     hamburgerBtn: document.getElementById('hamburgerBtn'),
-    navLinks: document.getElementById('navLinks')
+    navLinks: document.getElementById('navLinks'),
+>>>>>>> 613ec97aa3a2d9ee5d6e02e4b94164266db7edf2:TAI/mainapp/static/mainapp/js/fileJS.js
 };
 
 // State management
@@ -246,24 +269,44 @@ function showUpdateConfirmation() {
     elements.updateBtn.style.display = 'none';
 }
 
-// Update from file
+
 async function updateFromFile() {
+    console.log('updateFromFile called');
+    if (window.DOCUMENT_ID === null || window.DOCUMENT_ID === undefined) {
+        console.error('Cannot update: DOCUMENT_ID is not defined');
+        alert('Error updating document: Document ID is not defined');
+        return;
+    }
     try {
-        const response = await fetch('newstuff.txt');
-        if (!response.ok) throw new Error('File not found');
-        const text = await response.text();
+        const response = await fetch(`/api/docs/${DOCUMENT_ID}/`);
+        if (!response.ok) throw new Error(`Server responded ${response.status}`);
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        const text = data.content; // Extract content from JSON
         state.correctedText = text;
         state.asteriskText = text;
         state.fullCorrectedText = text;
         state.updateSource = 'file';
-        elements.correctionsArea.value = text;
-        elements.showCorrectedBtn.style.display = 'none';
-        elements.showWrongBtn.style.display = 'none';
-        elements.updateBtn.style.display = 'inline-block';
+        if (elements.correctionsArea) {
+            elements.correctionsArea.value = text;
+        } else {
+            console.error('Corrections area element not found');
+        }
+        if (elements.showCorrectedBtn) {
+            elements.showCorrectedBtn.style.display = 'none';
+        }
+        if (elements.showWrongBtn) {
+            elements.showWrongBtn.style.display = 'none';
+        }
+        if (elements.updateBtn) {
+            elements.updateBtn.style.display = 'inline-block';
+        }
         showUpdateConfirmation();
         addLogEntry('File updated');
+        alert('Document updated successfully!');
     } catch (err) {
-        alert(`Error loading file: ${err.message}`);
+        console.error('Update failed', err);
+        alert(`Error updating document: ${err.message}`);
     }
 }
 
@@ -357,6 +400,52 @@ const handleInput = debounce(() => {
     updateTokenCount();
 }, 300);
 
+
+
+// Helper to get a cookie by name
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+async function storeToDB() {
+    const content = elements.editor.value;
+    try {
+      const res = await fetch(`/api/docs/${DOCUMENT_ID}/save/`, {
+        method: 'POST',
+        credentials: 'same-origin',             // include cookies
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),// use your CSRF helper
+        },
+        body: JSON.stringify({ content }),
+      });
+  
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const data = await res.json();
+      
+      // reflect the new timestamp
+      elements.lastSaved.textContent =
+        'Last Saved: ' + new Date(data.latest_update).toLocaleString();
+      addLogEntry('Saved to DB');
+      alert('Document saved successfully!');
+    } catch (err) {
+      console.error('Save failed', err);
+      alert(`Error saving document: ${err.message}`);
+    }
+  }
+  
+
 // Event listeners
 elements.editor.addEventListener('input', handleInput);
 elements.themeToggleBtn.addEventListener('click', () => {
@@ -374,6 +463,10 @@ elements.hamburgerBtn.addEventListener('click', () => {
     elements.navLinks.classList.toggle('active');
     elements.hamburgerBtn.classList.toggle('active');
 });
+
+elements.updateFromDbBtn.addEventListener('click', updateFromFile)
+elements.saveToDbBtn.addEventListener('click', storeToDB)
+
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (e) => {

@@ -6,6 +6,10 @@ const dictionary = new Typo('en_US', false, false, {
 // Cache DOM elements
 const elements = {
     editor: document.getElementById('editor'),
+    lastSaved: document.getElementById('lastSaved'),
+    saveToDbBtn: document.getElementById('saveBtn'),
+    updateFileBtn: document.getElementById('updateFileBtn'),
+    showWrongBtn: document.getElementById('showWrongBtn'),
     correctionsArea: document.getElementById('correctionsArea'),
     showCorrectedBtn: document.getElementById('showCorrectedBtn'),
     diffArea: document.getElementById('diffArea'),
@@ -15,6 +19,7 @@ const elements = {
     activityLog: document.getElementById('activityLog'),
     themeToggleBtn: document.getElementById('themeToggleBtn'),
     userPic: document.querySelector('.user-pic'),
+    userMenu: document.getElementById('userMenu'),
     userDropdown: document.getElementById('userDropdown'),
     availableTokens: document.getElementById('availableTokens'),
     usedTokens: document.getElementById('usedTokens'),
@@ -317,7 +322,7 @@ async function shareText() {
     }
 }
 
-// Save text to localStorage
+// Save text to localStorage TODO: EDIT THIS
 function saveText() {
     localStorage.setItem('savedText', elements.editor.value);
     addLogEntry('Text saved');

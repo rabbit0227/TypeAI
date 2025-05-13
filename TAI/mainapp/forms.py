@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Card
+from .models import UserProfile, Document, Message, Card
 
 class SignUpForm(UserCreationForm):
     
@@ -18,6 +18,33 @@ class SignUpForm(UserCreationForm):
         profile.save()
 
         return user
+ 
+ # Create a docuemnt from textbox or file (works with empty) 
+class DocumentCreateForm(forms.Form):
+    title   = forms.CharField(max_length=100)
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'rows':10, 'cols':60}),
+        required=False,
+        help_text="Either paste text here…"
+    )
+    file = forms.FileField(
+        required=False,
+        help_text="…or upload a .txt file"
+    )  
+
+class MessageForm(forms.ModelForm):
+    recipient = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        label="To"
+    )
+    
+    class Meta:
+        model = Message
+        fields = ['recipient', 'subject', 'content']
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        }
 
 class BankInfoForm(forms.ModelForm):
     class Meta:
@@ -27,8 +54,3 @@ class BankInfoForm(forms.ModelForm):
             'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
         }
 
-"""
-Forms I think I'll need:
-Form that'll handle orders and credit/debit card saves as well as updating DB to paid user
-Form that'll push to db the updated tokens amount
-"""

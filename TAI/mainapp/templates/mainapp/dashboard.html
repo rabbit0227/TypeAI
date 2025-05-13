@@ -6,7 +6,35 @@
     <p>This is your dashboard. Access your documents and settings from the navigation bar.</p>
     <div class="dashboard-actions">
         <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a>
-        <a href="{% url 'user-settings' %}" class="cta-button secondary">Manage Settings</a>
+        <a href="{% url 'user_settings' %}" class="cta-button">Manage Settings</a>
+        <!-- Create a document through here-->
+        <a href="{% url 'create_document' %}" class="cta-button">➕ New Document</a>
     </div>
+
+
+    <!-- Very bare bones. For now only takes in document data from db
+        TODO:
+        1. Make it look nice (Proper spacing needed at minimum)
+        2. try to add an options on the side for invites and others
+        3. Need to display who the owner is (must impliment the Collaborator table)
+        4. 
+    -->
+    <section class="your-docs">
+        <h3>Your Documents</h3>
+        <ul class="doc-list">
+          {% for doc in documents %}
+            <li>
+              <a href="{% url 'text_editor' doc.pk %}">
+                {{ doc.title }}
+              </a>
+              <small class="text-muted">
+                &mdash; created {{ doc.created_at|date:"M j, Y" }}
+              </small>
+            </li>
+          {% empty %}
+            <li>You have no documents yet.</li>
+          {% endfor %}
+        </ul>
+      </section>
 </div>
 {% endblock %}

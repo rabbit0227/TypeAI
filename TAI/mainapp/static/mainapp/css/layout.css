@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Layout Styles
-   ========================================================================== */
-
 /* Main Container */
 .main-container {
     display: flex;
@@ -14,7 +10,6 @@
     flex: 1;
     overflow: auto;
 }
-
 .editor-content-container {
     display: flex;
     flex: 1;

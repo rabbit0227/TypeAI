@@ -1,8 +1,5 @@
-/* ==========================================================================
-   Navbar Component
-   ========================================================================== */
-
-   .navbar {
+/* Navbar */
+.navbar {
     background: var(--gradient-nav-light);
     padding: 1rem 1.5rem;
     box-shadow: 0 4px 12px var(--shadow-light);
@@ -96,4 +93,34 @@ body.dark-theme .hamburger span {
 
 .hamburger.active span:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -7px);
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px var(--shadow-dark);
+    }
+
+    body.dark-theme .nav-links {
+        background: #1f2a44;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-link, #themeToggleBtn {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .hamburger {
+        display: flex;
+    }
 }
