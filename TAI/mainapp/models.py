@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .validators import validate_card_number, validate_expiry
+from .validators import validate_card_number, validate_expiry, validate_cvv
 # from django.core.validators import MaxValueValidator
 # added scection {
 
@@ -35,14 +35,18 @@ class Card(models.Model):
         max_length=19, 
         validators=[validate_card_number]
     ) # max length for most cards, min being 13
-    cvv = models.CharField(max_length=4) # max CVV num possible, AMEX cards
+    cvv = models.CharField(
+        max_length=4, 
+        validators=[validate_cvv]
+        ) # max CVV num possible, AMEX cards
     expiry = models.CharField(
         max_length=5,
         validators=[validate_expiry]
     ) # MM/YY
+    cardholder_name = models.CharField(max_length=256)
 
     def __str__(self):
-        return f"Card ending in {self.card_number[-4]}" # Returning only last 4 digits
+        return f"Card ending in {self.card_number[-4:]}" # Returning only last 4 digits
 
 class TokensPackage(models.Model):
     name = models.CharField(max_length=100)
@@ -65,11 +69,12 @@ class Transaction(models.Model):
         User,
         on_delete=models.CASCADE
     )
-    package = models.ForeignKey(
-        TokensPackage,
-        on_delete=models.SET_NULL,
-        null=True
-    )
+    package = models.CharField(max_length=256)
+    # package = models.ForeignKey(
+    #     TokensPackage,
+    #     on_delete=models.SET_NULL,
+    #     null=True
+    # )
     price = models.DecimalField(
         max_digits=5,
         decimal_places=2

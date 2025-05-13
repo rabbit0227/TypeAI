@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Card
 
 class SignUpForm(UserCreationForm):
     
@@ -18,6 +18,14 @@ class SignUpForm(UserCreationForm):
         profile.save()
 
         return user
+
+class BankInfoForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = ['card_number','cvv','expiry','cardholder_name']
+        widgets = {
+            'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
+        }
 
 """
 Forms I think I'll need:

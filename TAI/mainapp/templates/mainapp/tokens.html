@@ -3,20 +3,32 @@
 {% block content %}
 <div class="token-shop-container">
     <h2>Account Status</h2>
-    <p>{{ user.username }}'s FREE account</p> 
-    <!-- <div class="dashboard-actions">
-        <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a>
-        <a href="{% url 'user-settings' %}" class="cta-button secondary">Manage Settings</a>
-    </div> -->
+    <a>{{ user_profile.associated_user.username }}'s <b>{{ user_profile.tier }}</b> account</a> 
 </div>
 <div class="dashboard-container">
-    <h2>Token options will be here</h2>
-
+    <h2>Select a package</h2>
+    <div class="">
+        {% for package in packages %}
+            <div class="dashboard-container">
+                {% if package.bv %}
+                    <h2>Best Value!</h2>
+                {% endif %}
+                <h2>{{ package.name }}</h2>
+                <h3>Price: ${{ package.price }}</h3>
+                <h3>Tokens: {{ package.token_value }}</h3>
+                
+                <form action="{% url 'select_package' package_id=package.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="cta-button">Select</button>
+                </form>
+            </div>
+        {% empty %}
+            <p>No packages available at the moment.</p>
+        {% endfor %}
+            </div>
     <div class="token-shop-container-actions">
         <a href="{% url 'payment_cart' %}" class="cta-button secondary">Checkout</a>
     </div>
 </div>
 {% endblock %}
 
-
-<!--For now these will just redirect to dashboard-->

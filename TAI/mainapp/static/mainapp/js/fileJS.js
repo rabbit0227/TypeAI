@@ -51,7 +51,7 @@ const debounce = (func, delay) => {
 function updateTokenCount() {
     const text = elements.editor.value;
     const usedTokens = text.trim() ? text.split(/\s+/).length : 0;
-    const maxTokens = 1000; // Example max tokens
+    const maxTokens = +(text.trim() ? text.split(/\s+/).length : 0);
     elements.usedTokens.textContent = `Used Tokens: ${usedTokens}`;
     elements.availableTokens.textContent = `Available Tokens: ${maxTokens - usedTokens}`;
 }

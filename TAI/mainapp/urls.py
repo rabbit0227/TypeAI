@@ -11,6 +11,8 @@ urlpatterns = [
     path('user-settings/', user_settings, name='user-settings'),
     path('logout', LogoutView.as_view(), name="logout"),
     path('tokens/', tokens, name='tokens_landing'),
-    path('cart/', cart, name='payment_cart')
+    path('cart/', cart, name='payment_cart'),
+    path('upgrade/', upgrade_user, name='upgrade_user'),
+    path('<int:package_id>/', select_package, name='select_package')
 ]
 
