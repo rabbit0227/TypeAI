@@ -22,10 +22,6 @@
             Received {% if unread_count %}<span class="badge">({{ unread_count }} unread)</span>{% endif %}
         </div>
         <div class="inbox-tab" data-tab="sent">Sent</div>
-        <!-- New tab for collaboration invites -->
-        <div class="inbox-tab" data-tab="invites">
-            Invites {% if pending_invites_count %}<span class="badge">({{ pending_invites_count }})</span>{% endif %}
-        </div>
     </div>
     
     <div class="inbox-content active" id="received-content">
@@ -36,23 +32,7 @@
                     <li class="message-item {% if not message.is_read %}unread{% endif %}">
                         <div class="message-sender">{{ message.sender.username }}</div>
                         <div class="message-subject">
-                            <!-- Display message type badge -->
-                            {% if message.message_type == 'Collaboration' %}
-                                <span class="message-type-badge message-type-collaboration">Collaboration</span>
-                            {% elif message.message_type == 'Complaint' %}
-                                <span class="message-type-badge message-type-complaint">Complaint</span>
-                            {% else %}
-                                <span class="message-type-badge message-type-regular">Message</span>
-                            {% endif %}
-                            
                             <a href="{% url 'message_detail' message.id %}">{{ message.subject }}</a>
-                            
-                            <!-- Show invitation status for collaboration invites -->
-                            {% if message.message_type == 'Collaboration' and message.invitation_status %}
-                                <span class="invite-status invite-{{ message.invitation_status|lower }}">
-                                    {{ message.invitation_status }}
-                                </span>
-                            {% endif %}
                         </div>
                         <!-- time really isn't needed for what we are doing but i was copying gmail, I mean referencing...-->
                         <div class="message-date">{{ message.timestamp|date:"M d, Y" }}</div>
@@ -79,23 +59,7 @@
                     <li class="message-item">
                         <div class="message-sender">To: {{ message.recipient.username }}</div>
                         <div class="message-subject">
-                            <!-- Display message type badge -->
-                            {% if message.message_type == 'Collaboration' %}
-                                <span class="message-type-badge message-type-collaboration">Collaboration</span>
-                            {% elif message.message_type == 'Complaint' %}
-                                <span class="message-type-badge message-type-complaint">Complaint</span>
-                            {% else %}
-                                <span class="message-type-badge message-type-regular">Message</span>
-                            {% endif %}
-                            
                             <a href="{% url 'message_detail' message.id %}">{{ message.subject }}</a>
-                            
-                            <!-- Show invitation status for collaboration invites -->
-                            {% if message.message_type == 'Collaboration' and message.invitation_status %}
-                                <span class="invite-status invite-{{ message.invitation_status|lower }}">
-                                    {{ message.invitation_status }}
-                                </span>
-                            {% endif %}
                         </div>
                         <div class="message-date">{{ message.timestamp|date:"M d, Y" }}</div>
                         <div class="message-actions">
@@ -112,69 +76,11 @@
             </div>
         {% endif %}
     </div>
-    
-    <!-- New tab content for collaboration invites -->
-    <div class="inbox-content" id="invites-content">
-        {% if collaboration_invites %}
-            <ul class="message-list">
-                {% for invite in collaboration_invites %}
-                    <li class="message-item {% if not invite.is_read %}unread{% endif %}">
-                        <div class="message-sender">{{ invite.sender.username }}</div>
-                        <div class="message-subject">
-                            <span class="message-type-badge message-type-collaboration">Collaboration</span>
-                            <a href="{% url 'message_detail' invite.id %}">{{ invite.subject }}</a>
-                            <span class="invite-status invite-{{ invite.invitation_status|lower }}">
-                                {{ invite.invitation_status }}
-                            </span>
-                        </div>
-                        <div class="message-date">{{ invite.timestamp|date:"M d, Y" }}</div>
-                        <div class="message-actions">
-                            {% if invite.invitation_status == 'Pending' %}
-                                <a href="{% url 'handle_invitation' invite.id 'accept' %}" class="btn-action btn-accept" title="Accept">
-                                    <i class="fas fa-check"></i>
-                                </a>
-                                <a href="{% url 'handle_invitation' invite.id 'decline' %}" class="btn-action btn-decline" title="Decline">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            {% endif %}
-                            <a href="{% url 'delete_message' invite.id %}" onclick="return confirm('Are you sure you want to delete this invitation?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="no-messages">
-                <p>No collaboration invitations</p>
-            </div>
-        {% endif %}
-    </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
+
 <script src = "{% static 'mainapp/js/inbox.js' %}"></script>
-<script>
-    // Enhanced tab switching code
-    document.addEventListener('DOMContentLoaded', function() {
-        const tabs = document.querySelectorAll('.inbox-tab');
-        const contents = document.querySelectorAll('.inbox-content');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs and contents
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Show corresponding content
-                const tabName = this.getAttribute('data-tab');
-                document.getElementById(tabName + '-content').classList.add('active');
-            });
-        });
-    });
-</script>
+
 {% endblock %}
