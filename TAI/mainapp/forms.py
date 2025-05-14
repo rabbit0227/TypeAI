@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Document, Message, Card
+from .models import UserProfile, Document, Message
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -23,6 +23,7 @@ class CustomAuthenticationForm(AuthenticationForm):
                 )
         except UserProfile.DoesNotExist:
             pass
+    
 
 class SignUpForm(UserCreationForm):
     
@@ -65,12 +66,3 @@ class MessageForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }
-
-class BankInfoForm(forms.ModelForm):
-    class Meta:
-        model = Card
-        fields = ['card_number','cvv','expiry','cardholder_name']
-        widgets = {
-            'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
-        }
-

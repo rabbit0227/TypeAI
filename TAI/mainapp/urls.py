@@ -4,7 +4,6 @@ from .views import home_page, sign_up, dashboard, text_editor, user_settings
 from .views import create_document, save_document, get_document
 from .views import inbox, message_detail, send_message, delete_message, get_unread_count, handle_invitation
 from .views import CustomLoginView
-from .views import tokens, cart, upgrade_user, select_package 
 
 urlpatterns = [
     path('', home_page, name='home-page'),
@@ -29,9 +28,5 @@ urlpatterns = [
     path('inbox/delete/<int:message_id>/', delete_message, name='delete_message'),
     path('inbox/unread-count/', get_unread_count, name='get_unread_count'),
     path('message/invitation/<int:message_id>/<str:action>/', handle_invitation, name='handle_invitation'),
-    path('tokens/', tokens, name='tokens_landing'),
-    path('cart/', cart, name='payment_cart'),
-    path('upgrade/', upgrade_user, name='upgrade_user'),
-    path('<int:package_id>/', select_package, name='select_package')
 ]
 
