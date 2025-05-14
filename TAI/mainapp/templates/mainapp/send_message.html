@@ -4,72 +4,9 @@
 {% block title %}Compose Message | TypeAI{% endblock %}
 
 {% block extra_head %}
-<!-- i know -->
-<style>
-    .compose-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .compose-header {
-        margin-bottom: 20px;
-    }
-    
-    .compose-form {
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        padding: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1em;
-    }
-    
-    .btn {
-        padding: 10px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        border: none;
-        font-size: 1em;
-    }
-    
-    .btn-primary {
-        background-color: #3498db;
-        color: white;
-    }
-    
-    .btn-secondary {
-        background-color: #95a5a6;
-        color: white;
-        margin-left: 10px;
-    }
-    
-    /* Dark theme overrides */
-    .dark-theme .compose-form {
-        background-color: #2a2a2a;
-    }
-    
-    .dark-theme .form-control {
-        background-color: #333;
-        border-color: #444;
-        color: #eee;
-    }
-</style>
+
+<link rel ="stylesheet" href = "{% static 'mainapp\css\message_sender.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -79,6 +16,19 @@
     </div>
     
     <div class="compose-form">
+        <!-- Message type selector -->
+        <div class="message-type-selector">
+            <div class="message-type-option message-type-regular active" data-type="Regular">
+                <i class="fas fa-envelope"></i> Regular Message
+            </div>
+            <div class="message-type-option message-type-collaboration" data-type="Collaboration">
+                <i class="fas fa-users"></i> Collaboration Invite
+            </div>
+            <div class="message-type-option message-type-complaint" data-type="Complaint">
+                <i class="fas fa-exclamation-triangle"></i> Admin Complaint
+            </div>
+        </div>
+        
         <form method="post" action="{% url 'send_message' %}">
             {% csrf_token %}
             
@@ -87,6 +37,9 @@
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
+            
+            <!-- Hidden field for message type -->
+            <input type="hidden" name="message_type" id="message_type" value="Regular">
             
             <div class="form-group">
                 <label for="id_recipient">To:</label>
@@ -104,6 +57,20 @@
                 {% endif %}
             </div>
             
+            <!-- Document selector for collaboration invites -->
+            <div id="document-selector" class="document-selector">
+                <h3>Select Document to Share</h3>
+                <div class="form-group">
+                    <label for="id_document">Document:</label>
+                    <select name="related_document" id="id_document" class="form-control">
+                        <option value="">-- Select a document --</option>
+                        {% for document in user_documents %}
+                            <option value="{{ document.id }}">{{ document.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
             <div class="form-group">
                 <label for="id_content">Message:</label>
                 {{ form.content }}
@@ -119,4 +86,46 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Message type selector functionality
+    const typeOptions = document.querySelectorAll('.message-type-option');
+    const messageTypeInput = document.getElementById('message_type');
+    const documentSelector = document.getElementById('document-selector');
+    
+    typeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove active class from all options
+            typeOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to clicked option
+            this.classList.add('active');
+            
+            // Update hidden input value
+            const messageType = this.getAttribute('data-type');
+            messageTypeInput.value = messageType;
+            
+            // Show/hide document selector based on message type
+            if (messageType === 'Collaboration') {
+                documentSelector.style.display = 'block';
+            } else {
+                documentSelector.style.display = 'none';
+            }
+            
+            // Update subject placeholder based on message type
+            const subjectField = document.getElementById('id_subject');
+            if (messageType === 'Collaboration') {
+                subjectField.placeholder = 'Collaboration invitation for document';
+            } else if (messageType === 'Complaint') {
+                subjectField.placeholder = 'Issue report for administrator';
+            } else {
+                subjectField.placeholder = 'Message subject';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
