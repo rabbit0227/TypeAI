@@ -1,0 +1,16 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}Tokens Shop{% endblock %}
+{% block content %}
+<h2>Upgrade Account</h2>
+<p>To upgrade to PAID tier, please enter payment details. You will be charged $1 as confirmation</p>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">upgrade now</button>
+</form>
+{% endblock %}
+{% if bank_info %}
+    <h3>Your current bank info:</h3>
+    <p>Card ending in: {{ bank_info.card_number|slice:"-4:" }}****</p>
+{% endif %}

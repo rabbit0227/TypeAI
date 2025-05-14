@@ -1,0 +1,27 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}Checkout Cart{% endblock %}
+{% block content %}
+<div class="token-shop-container">
+    <h2>{{ user_profile.associated_user.username }} final checkout</h2>
+    <h2>Cart details</h2>
+    <h3>Your package: {{ package.name }}</h3>
+    <a>Price: ${{ package.price }}</a>
+    <a>Tokens: {{ package.token_value }}</a>
+</div>
+<div class="token-shop-container">
+    <h2>Saved payment method</h2>
+    <div>
+        <a>Card ending in: {{ cards.card_number|slice:"-4:" }}****</a>
+        <a>Exp: {{ cards.expiry }}</a>
+        <br>
+        <a>Cardholder name: <b>{{ cards.cardholder_name }}</b></a>
+        <div class="token-shop-container-actions">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="cta-button secondary">Finalize purchase</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
