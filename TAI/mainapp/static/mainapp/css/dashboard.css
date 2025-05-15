@@ -52,6 +52,7 @@ body.dark-theme .dashboard-container p {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: background-color 0.3s, color 0.3s;
 }
+
 body.dark-theme .doc-section {
     background: var(--gradient-dark);
     color: white;
@@ -69,6 +70,7 @@ body.dark-theme .doc-section {
     transition: background-color 0.2s;
 }
 
+
 .doc-item:hover {
     background-color: #f1f3f5;
 }
@@ -80,6 +82,7 @@ body.dark-theme .doc-info>a {
 body.dark-theme .doc-item:hover {
     background: #ffffff17;
 }
+
 .doc-info {
     display: flex;
     flex-direction: column;

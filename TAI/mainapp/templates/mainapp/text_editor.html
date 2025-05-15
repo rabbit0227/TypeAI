@@ -20,14 +20,12 @@
                 <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
             </button> -->
             <!-- buttons for complaint, blacklist word, view collaborators,  -->
-            <a href="{% url 'send_message' %}?type=Collaboration" class="sidebar-button" id="CollabBtn" title="File Complaint" style="text-decoration: none;">
-                <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">File Collab</span>
-            </a>
-            <a href="{% url 'send_message' %}?type=complaint" class="sidebar-button" id="complaintBtn" title="File Complaint" style="text-decoration: none;">
-                <img class="icon" src="{% static 'mainapp/media/complain.svg' %}" alt="img"><span class="button-text">File Complaint</span>
-            </a>
+
             <a href="{% url 'send_message' %}?type=complaint" class="sidebar-button" id="BlackListBtn" title="File Blacklist" style="text-decoration: none;">
                 <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Blacklist a word</span>
+            <a href="{% url 'send_message' %}?type=black_list" class="sidebar-button" id="BlackListBtn" title="File Blacklist" style="text-decoration: none;">
+                <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Black List</span>
+
             </a>
         </div>
         <div class="sidebar-bottom">

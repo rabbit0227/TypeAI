@@ -119,12 +119,13 @@ def text_editor(request, pk=None):
             doc = get_object_or_404(Collaborator,document = pk, user = request.user)
             docID = doc.document.pk
         else:
-            # this should get the document from collab
             doc = get_object_or_404(Document, pk=pk, owner=request.user)
             docID  = pk
 
     return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
 
+
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID, 'user_profile' : UserProfile})
 
 @login_not_banned_required
 def user_settings(request):
@@ -236,6 +237,7 @@ def fileComplaint(request):
     }
     return render(request, 'mainapp/send_message.html', context)
 
+
 # Inbox functionality
 @login_not_banned_required
 def inbox(request):
@@ -286,6 +288,7 @@ def message_detail(request, message_id):
 def send_message(request):
     # Get user's documents for collaboration invites
     user_documents = Document.objects.filter(owner=request.user)
+
     
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -407,7 +410,7 @@ def send_message(request):
     
     # Get user's documents for collaboration invites
     user_documents = Document.objects.filter(owner=request.user)
-    
+
     return render(request, 'mainapp/send_message.html', {
         'message_type': message_type,
         'form': form,
