@@ -47,16 +47,6 @@ def dashboard(request):
     
     return render(request, 'mainapp/dashboard.html', context)
 
-# @login_required
-# def text_editor(request, pk = None):
-#     if(pk == None):
-#         return render(request, 'mainapp/text_editor.html')
-#     else:
-#         doc = get_object_or_404(Document, pk=pk, user=request.user)
-#     return render(request, 'mainapp/text_editor.html', {
-#         'document': doc
-#         })
-
 @login_required
 def text_editor(request, pk=None):
     if pk is None:

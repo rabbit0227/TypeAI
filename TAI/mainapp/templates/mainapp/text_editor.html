@@ -10,14 +10,17 @@
             <button class="sidebar-button" id="updateFileBtn"  title="Update from File">
                 <img class="icon" src="{% static 'mainapp/media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
             </button>
-            <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
-                <img class="icon" src="{% static 'mainapp/media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
-            </button>
             <button class="sidebar-button" id="saveBtn" onclick="saveText()" title="Save">
                 <img class="icon" src="{% static 'mainapp/media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
             </button>
             <button class="sidebar-button" id="addCollaboratorBtn" onclick="addCollaborator()" title="Add Collaborator">
                 <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
+            </button>
+            <button class="sidebar-button" id="complaintBtn" onclick="redirectToComplaintForm()" title="File Complaint">
+                <img class="icon" src="{% static 'mainapp/media/complain.svg' %}" alt="img"><span class="button-text">File Complaint</span>
+            </button>
+            <button class="sidebar-button" id="blacklistBtn" onclick="addToBlacklist()" title="Add to Blacklist">
+                <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Add to Blacklist</span>
             </button>
         </div>
         <div class="sidebar-bottom">
@@ -31,9 +34,9 @@
         <!-- Top Bars (Token Bar and Toolbar) -->
         <div class="top-bars">
             <div class="token-bar">
-                <span id="availableTokens">Available Tokens: {{ user_profile.tokens }}</span>
+                <span id="availableTokens">Available Tokens: {{user_profile.tokens}}</span>
                 <span id="usedTokens">Used Tokens: 0</span>
-                <span id="lastSaved">Last Saved: Apr 27, 2025</span>
+                <span id="lastSaved">Last Saved: {{doc.created_at}}</span>
             </div>
             <div class="toolbar">
                 <button id="spellCheckBtn" onclick="checkSpelling()">Check Spelling</button>
@@ -50,10 +53,6 @@
         <!-- Editor Area -->
         <div class="editor-area">
             <div class="textarea-container">
-                <!--
-                <label class="textarea-title">Text Title</label>
-                <textarea id="editor" placeholder="Type your text here..."></textarea>
-                -->
                 <label class="textarea-title">{{ document.title }}</label>
                 <textarea id="editor" placeholder="Type your text here...">{{ document.content|escape }}</textarea>
                 
@@ -69,35 +68,6 @@
 <!-- Bottom Bar (Diff Area) -->
 <div class="bottom-bar" id="diffArea" style="display: none;"></div>
 
-<!-- Anthony
-Pass Document ID to  Javascript
-to fix: error  DOCUMENT_ID is not defined after using Save To DB button
--->
-<!-- {% if document %}
-    <script>
-        const DOCUMENT_ID = {{ document.pk }};
-    </script>
-{% endif %}
-
-{% if document %}
-    <script>
-        (function() {
-            console.log('Document PK:', {{ document.pk|default_if_none:"null" }});
-            const DOCUMENT_ID = {{ document.pk|default_if_none:"null" }};
-            if (DOCUMENT_ID === null) {
-                console.error('DOCUMENT_ID is null - document.pk was not provided');
-            }
-            window.DOCUMENT_ID = DOCUMENT_ID;
-        })();
-    </script>
-{% else %}
-    <script>
-        console.log('No document provided');
-        window.DOCUMENT_ID = null;
-    </script>
-{% endif %} -->
-
-
 <script>
     // Define DOCUMENT_ID for storeToDB and window.DOCUMENT_ID for updateFromFile
     const DOCUMENT_ID = 
@@ -107,7 +77,6 @@ to fix: error  DOCUMENT_ID is not defined after using Save To DB button
         console.warn('DOCUMENT_ID is null - no document provided');
     }
 </script>
-<!-- <script src="{% static 'js/fileJS.js' %}"></script> -->
 <script src="{% static 'mainapp/js/init.js' %}"></script>
 <script src="{% static 'mainapp/js/domUtils.js' %}"></script>
 <script src="{% static 'mainapp/js/state.js' %}"></script>
