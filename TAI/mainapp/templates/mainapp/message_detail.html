@@ -65,6 +65,7 @@
             <!-- Show action buttons for pending invitations -->
             {% if message.invitation_status == 'Pending' and request.user == message.recipient %}
                 <div class="invitation-actions">
+                    <!-- not implemented yet, forgot, but this is low priority-->
                     <a href="{% url 'handle_invitation' message.id 'accept' %}" class="btn btn-accept">
                         <i class="fas fa-check"></i> Accept Invitation
                     </a>

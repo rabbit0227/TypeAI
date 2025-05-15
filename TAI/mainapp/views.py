@@ -53,7 +53,7 @@ def text_editor(request, pk=None):
         doc = None
     else:
         doc = get_object_or_404(Document, pk=pk)
-        if doc.is_shared:
+        if False: #CHANGE THIS TO is_shared IN DOCUMENT TABLE
             doc = get_object_or_404(Collaborator,document = pk, user = request.user)
             docID = doc.document.pk
         else:
@@ -155,15 +155,6 @@ def save_document(request, pk):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-def fileComplaint(request):
-    # Render the send_message.html template with a context that indicates 
-    # we want to activate the complaint tab
-    context = {
-        # Include any necessary form and data for the send_message template
-        'active_tab': 'Complaint'  # This will be used to set the active tab
-    }
-    return render(request, 'mainapp/send_message.html', context)
-
 # Inbox functionality
 @login_required
 def inbox(request):
@@ -212,30 +203,64 @@ def message_detail(request, message_id):
 
 @login_required
 def send_message(request):
+    # Get user's documents for collaboration invites
+    user_documents = Document.objects.filter(user=request.user)
+    
     if request.method == 'POST':
         form = MessageForm(request.POST)
         message_type = request.POST.get('message_type', Message.MessageType.REGULAR)
         
         # For complaints, validate recipient is an admin
         if message_type == Message.MessageType.COMPLAINT:
-            recipient_username = request.POST.get('recipient')
+            # Check how the recipient is being passed in the form
+            recipient_value = request.POST.get('recipient')
+            
             try:
-                recipient = User.objects.get(username=recipient_username)
+                recipient = None
+                try:
+                    recipient = User.objects.get(username=recipient_value)
+                except User.DoesNotExist:
+                    try:
+                        recipient = User.objects.get(id=recipient_value)
+                    except (User.DoesNotExist, ValueError):
+                        pass
+                
+                if not recipient:
+                    messages.error(request, f"No user found with identifier: {recipient_value}")
+                    form.add_error('recipient', "Recipient does not exist.")
+                    return render(request, 'mainapp/send_message.html', {
+                        'message_type': message_type,
+                        'form': form,
+                        'user_documents': user_documents
+                    })
+                
+                # Check if recipient is admin for complaints
                 if not recipient.is_staff:
                     messages.error(request, "Complaints can only be sent to administrators.")
                     form.add_error('recipient', "Please select an administrator.")
-                    return render(request, 'mainapp/send_message.html', {'form': form})
-            except User.DoesNotExist:
-                messages.error(request, "Selected recipient does not exist.")
-                return render(request, 'mainapp/send_message.html', {'form': form})
+                    return render(request, 'mainapp/send_message.html', {
+                        'message_type': message_type,
+                        'form': form, 
+                        'user_documents': user_documents
+                    })
+            except Exception as e:
+                # Catch any other errors and log them
+                print(f"Error validating recipient: {str(e)}")
+                messages.error(request, f"Error validating recipient: {str(e)}")
+                return render(request, 'mainapp/send_message.html', {
+                    'message_type': message_type,
+                    'form': form,
+                    'user_documents': user_documents
+                })
         
         if form.is_valid():
             message = form.save(commit=False)
             message.sender = request.user
             message.message_type = message_type
             
-            # For collaboration invites, set initial status and link document
+            # For collaboration invites
             if message_type == Message.MessageType.COLLABORATION:
+                # (collaboration code unchanged)
                 message.invitation_status = Message.InvitationStatus.PENDING
                 document_id = request.POST.get('related_document')
                 if document_id:
@@ -244,32 +269,64 @@ def send_message(request):
                         message.related_document = document
                     except Document.DoesNotExist:
                         messages.error(request, "Selected document does not exist or you don't have permission.")
-                        return render(request, 'mainapp/send_message.html', {'form': form})
+                        return render(request, 'mainapp/send_message.html', {
+                            'message_type': message_type,
+                            'form': form,
+                            'user_documents': user_documents
+                        })
                 else:
                     messages.error(request, "Please select a document to share.")
-                    return render(request, 'mainapp/send_message.html', {'form': form})
+                    return render(request, 'mainapp/send_message.html', {
+                        'message_type': message_type,
+                        'form': form,
+                        'user_documents': user_documents
+                    })
             
+            # Save the message
             message.save()
             messages.success(request, f"{message_type} sent successfully!")
             return redirect('inbox')
         else:
-            messages.error(request, "Error sending message. Please check the form.")
+            # Show detailed form errors
+            print(f"Form errors: {form.errors}")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            
+            return render(request, 'mainapp/send_message.html', {
+                'message_type': message_type,
+                'form': form,
+                'user_documents': user_documents
+            })
     else:
-        # For GET requests, prefill recipient if provided in URL
-        recipient_id = request.GET.get('recipient')
+        # For GET requests
         initial_data = {}
-        if recipient_id:
-            try:
-                recipient = User.objects.get(id=recipient_id)
-                initial_data['recipient'] = recipient
-            except User.DoesNotExist:
-                pass
+        
+        # Check if complaint type is specified
+        message_type = request.GET.get('type')
+        
+        # For complaints, pre-select an administrator
+        if message_type and message_type.lower() == 'complaint':
+            # Find an admin user
+            admin_user = User.objects.filter(is_staff=True).first()
+            if admin_user:
+                print(f"Selected admin for complaint: {admin_user.username}")
+                initial_data['recipient'] = admin_user
+                initial_data['subject'] = "Complaint: "
+        else:
+            # For other messages
+            recipient_id = request.GET.get('recipient')
+            if recipient_id:
+                try:
+                    recipient = User.objects.get(id=recipient_id)
+                    initial_data['recipient'] = recipient
+                except User.DoesNotExist:
+                    pass
+        
         form = MessageForm(initial=initial_data)
     
-    # Get user's documents for collaboration invites
-    user_documents = Document.objects.filter(user=request.user)
-    
     return render(request, 'mainapp/send_message.html', {
+        'message_type': message_type,
         'form': form,
         'user_documents': user_documents
     })
