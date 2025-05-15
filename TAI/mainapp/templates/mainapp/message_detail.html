@@ -4,7 +4,6 @@
 {% block title %}{{ message.subject }} | TypeAI{% endblock %}
 
 {% block extra_head %}
-
 <link rel ="stylesheet" href = "{% static 'mainapp\css\message_detail.css' %}">
 
 {% endblock %}
@@ -13,6 +12,15 @@
 <div class="message-container">
     <div class="message-header">
         <h1>{{ message.subject }}</h1>
+        
+        <!-- Message type indicator -->
+        {% if message.message_type == 'Collaboration' %}
+            <div class="message-type message-type-collaboration">Collaboration Invitation</div>
+        {% elif message.message_type == 'Complaint' %}
+            <div class="message-type message-type-complaint">Admin Complaint</div>
+        {% else %}
+            <div class="message-type message-type-regular">Regular Message</div>
+        {% endif %}
     </div>
     
     <div class="message-details">
@@ -32,12 +40,47 @@
             {% endif %}
         </div>
         
+        <!-- For collaboration invites, show status -->
+        {% if message.message_type == 'Collaboration' %}
+            <div class="invitation-status invitation-{{ message.invitation_status|lower }}">
+                Status: {{ message.invitation_status }}
+            </div>
+            
+            <!-- If there's a related document, show details -->
+            {% if message.related_document %}
+                <div class="document-details">
+                    <h3>Related Document</h3>
+                    <p><strong>Title:</strong> {{ message.related_document.title }}</p>
+                    <p><strong>Created:</strong> {{ message.related_document.created_at|date:"F d, Y" }}</p>
+                    <p><strong>Owner:</strong> {{ message.related_document.user.username }}</p>
+                    
+                    {% if message.invitation_status == 'Accepted' %}
+                        <a href="{% url 'view_document' message.related_document.id %}" class="btn btn-primary">
+                            <i class="fas fa-file-alt"></i> View Document
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <!-- Show action buttons for pending invitations -->
+            {% if message.invitation_status == 'Pending' and request.user == message.recipient %}
+                <div class="invitation-actions">
+                    <a href="{% url 'handle_invitation' message.id 'accept' %}" class="btn btn-accept">
+                        <i class="fas fa-check"></i> Accept Invitation
+                    </a>
+                    <a href="{% url 'handle_invitation' message.id 'decline' %}" class="btn btn-decline">
+                        <i class="fas fa-times"></i> Decline Invitation
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+        
         <div class="message-content">
             {{ message.content }}
         </div>
         
         <div class="message-actions">
-            {% if request.user == message.recipient %}
+            {% if request.user == message.recipient and message.message_type == 'Regular' %}
                 <button class="btn btn-primary" id="replyBtn">Reply</button>
             {% endif %}
             <a href="{% url 'inbox' %}" class="btn btn-secondary">Back to Inbox</a>
@@ -45,7 +88,7 @@
         </div>
     </div>
     
-    {% if request.user == message.recipient %}
+    {% if request.user == message.recipient and message.message_type == 'Regular' %}
         <div class="reply-form" id="replyForm" style="display: none;">
             <h3>Reply</h3>
             <form method="post" action="{% url 'send_message' %}">
@@ -88,7 +131,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-<!-- <script src = "{% static 'mainapp/js/inbox.js' %}"></script> -->
-
 {% endblock %}
