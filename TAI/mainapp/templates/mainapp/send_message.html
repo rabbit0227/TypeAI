@@ -19,9 +19,11 @@
             <div class="message-type-option message-type-regular" data-type="Regular">
                 <i class="fas fa-envelope"></i> Regular Message
             </div>
+            {% if user.userprofile.tier == 'Paid' %}
             <div class="message-type-option message-type-collaboration" data-type="Collaboration">
                 <i class="fas fa-users"></i> Collaboration Invite
             </div>
+            {% endif %}
             <div class="message-type-option message-type-complaint" data-type="Complaint">
                 <i class="fas fa-exclamation-triangle"></i> Admin Complaint
             </div>

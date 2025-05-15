@@ -53,6 +53,11 @@ body.dark-theme .dashboard-container p {
     transition: background-color 0.3s, color 0.3s;
 }
 
+body.dark-theme .doc-section {
+    background: var(--gradient-dark);
+    color: white;
+}
+
 .doc-list {
     list-style: none;
     padding: 0;
@@ -63,6 +68,19 @@ body.dark-theme .dashboard-container p {
     padding: 0.8rem;
     border-bottom: 1px solid var(--doc-border);
     transition: background-color 0.2s;
+}
+
+
+.doc-item:hover {
+    background-color: #f1f3f5;
+}
+
+body.dark-theme .doc-info>a {
+    color: var(--btn-spellcheck);
+    direction: none;
+}
+body.dark-theme .doc-item:hover {
+    background: #ffffff17;
 }
 
 .doc-info {
@@ -105,3 +123,4 @@ body.dark-theme .doc-title {
         gap: 2rem;
     }
 }
+

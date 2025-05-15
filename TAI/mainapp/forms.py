@@ -8,6 +8,8 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.utils import timezone
+
 
 class CustomAuthenticationForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
@@ -40,6 +42,7 @@ class CustomAuthenticationForm(AuthenticationForm):
                 
         except UserProfile.DoesNotExist:
             pass
+    
 
 class SignUpForm(UserCreationForm):
     
@@ -91,4 +94,3 @@ class BankInfoForm(forms.ModelForm):
         widgets = {
             'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
         }
-

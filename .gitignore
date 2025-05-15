@@ -7,6 +7,8 @@
 /TAI/TAI/__pycache__
 
 /TAI/mainapp/__pycache__
+
+TypeAI\TAI\mainapp\migrations\__pycache__
 __pycache__
 
 # ingore extras (should only be Tehseens local and NOT IN REPOSITORY)

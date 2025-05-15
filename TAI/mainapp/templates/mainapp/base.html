@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="{% static 'mainapp/css/editor.css' %}">
     <link rel="stylesheet" href="{% static 'mainapp/css/scrollbar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'mainapp/css/token-shop.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -35,9 +34,8 @@
                 <div class="nav-links" id="navLinks">
                     {% if user.is_authenticated %}
                         <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
-                        <a href="{% url 'text_editor' %}" class="nav-link">Text Editor</a>
-                        <a href="{% url 'tokens_landing' %}" class="nav-link">Wallet</a>
-                        <a href="{% url 'user_settings' %}" class="nav-link">Settings</a>
+                        <!-- <a href="{% url 'text_editor' %}" class="nav-link">Text Editor</a> -->
+                        <a href="{% url 'tokens_landing' %}" class="nav-link">Tokens: {{user_profile.tokens}}</a>
                         <button id="themeToggleBtn">Toggle Theme</button>
                     {% else %}
                         <a href="{% url 'home-page' %}" class="nav-link">Home</a>
@@ -64,6 +62,7 @@
                                 {% csrf_token %}
                                 <button class="dropdown-item">Logout</button>
                             </form>
+                            <button class="dropdown-item" onclick="window.location.href='{% url 'tokens_landing' %}'">Buy Tokens: {{user_profile.tokens}}</button>
                             
                         </div>
                     </div>

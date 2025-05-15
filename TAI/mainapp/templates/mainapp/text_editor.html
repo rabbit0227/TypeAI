@@ -10,17 +10,22 @@
             <button class="sidebar-button" id="updateFileBtn"  title="Update from File">
                 <img class="icon" src="{% static 'mainapp/media/server-solid.svg' %}" alt="img"><span class="button-text">Update from DB</span>
             </button>
+            <!-- <button class="sidebar-button" id="shareBtn" onclick="shareText()" title="Share">
+                <img class="icon" src="{% static 'mainapp/media/share-solid.svg' %}" alt="img"><span class="button-text">Share</span>
+            </button> -->
             <button class="sidebar-button" id="saveBtn" onclick="saveText()" title="Save">
                 <img class="icon" src="{% static 'mainapp/media/floppy-disk-solid.svg' %}" alt="img"><span class="button-text">Save to DB</span>
             </button>
-            <a href="{% url 'send_message' %}?type=Collaboration" class="sidebar-button" id="CollabBtn" title="File Complaint" style="text-decoration: none;">
-                <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">File Collab</span>
-            </a>
-            <a href="{% url 'send_message' %}?type=complaint" class="sidebar-button" id="complaintBtn" title="File Complaint" style="text-decoration: none;">
-                <img class="icon" src="{% static 'mainapp/media/complain.svg' %}" alt="img"><span class="button-text">File Complaint</span>
-            </a>
+            <!-- <button class="sidebar-button" id="addCollaboratorBtn" onclick="addCollaborator()" title="Add Collaborator">
+                <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
+            </button> -->
+            <!-- buttons for complaint, blacklist word, view collaborators,  -->
+
+            <a href="{% url 'send_message' %}?type=complaint" class="sidebar-button" id="BlackListBtn" title="File Blacklist" style="text-decoration: none;">
+                <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Blacklist a word</span>
             <a href="{% url 'send_message' %}?type=black_list" class="sidebar-button" id="BlackListBtn" title="File Blacklist" style="text-decoration: none;">
                 <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Black List</span>
+
             </a>
         </div>
         <div class="sidebar-bottom">
@@ -71,8 +76,9 @@
 <script>
     // Define DOCUMENT_ID for storeToDB and window.DOCUMENT_ID for updateFromFile
     const DOCUMENT_ID = 
-    {% if document %}{{ document.pk|default_if_none:"null" }}{% else %}null{% endif %};
+    {% if doc_id %}{{ doc_id|default_if_none:"null" }}{% else %}null{% endif %};
     window.DOCUMENT_ID = DOCUMENT_ID;
+    console.log("test new value: "+ {{ doc_id }} )
     if (window.DOCUMENT_ID === null) {
         console.warn('DOCUMENT_ID is null - no document provided');
     }

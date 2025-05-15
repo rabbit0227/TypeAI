@@ -8,7 +8,6 @@ class UserProfile(models.Model):
     class Tier(models.TextChoices):
         FREE = 'Free', 'Free'
         PAID = 'Paid', 'Paid'
-        SUPER = 'Super', 'Super'
 
 
     associated_user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -29,6 +28,9 @@ class UserProfile(models.Model):
 
     is_banned = models.BooleanField(default=False)
 
+    time_out_end = models.DateTimeField(
+        default = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
+    )
     def __str__(self):
         return f"{self.associated_user.username}'s profile"
 
@@ -101,13 +103,14 @@ class Document(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     latest_update = models.DateTimeField(auto_now=True) 
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         User, 
         on_delete=models.CASCADE
     )
-
+    is_shared = models.BooleanField(default=False)
+    
     def __str__(self):
-        return (f"ID: {self.id}\n TITLE: {self.title}\n CONTENT: Didnt paste here for sanity\n CREATION: {self.created_at}\n LATEST: {self.latest_update}\n USERID: {self.user}")
+        return (f"Doc_id: {self.id}; Owner: {self.owner.username}; Title: {self.title}")
 
 # might split this into complaints and collab invites
 class Message(models.Model):

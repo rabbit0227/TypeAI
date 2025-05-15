@@ -1,4 +1,5 @@
 import json
+from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,9 +7,70 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages  # Allows sending user-friendly messages
 from django.http import JsonResponse
 from django.db import transaction
-from django.utils import timezone
+from django import forms
+from datetime import datetime
 from .forms import SignUpForm, DocumentCreateForm, BankInfoForm, MessageForm, CustomAuthenticationForm
 from .models import UserProfile, Card, TokensPackage, Transaction, Document, Message, Collaborator, User, Blacklist
+from .forms import SignUpForm, DocumentCreateForm
+from .models import UserProfile, Document, Collaborator, User, Blacklist
+
+from django.utils import timezone
+from .forms import MessageForm, CustomAuthenticationForm
+from .models import Message
+
+
+def not_banned_required(function):
+    """
+    Decorator that checks if a user is banned and logs them out if they are.
+    This decorator should be used in combination with login_not_banned_required.
+    """
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        user = request.user
+        
+        now = timezone.now()
+        # Check if user has a userprofile and if they're banned
+        try:
+            userprofile = get_object_or_404(UserProfile,associated_user = user )
+            if userprofile and userprofile.time_out_end <= now:
+                if userprofile.is_banned:
+                    userprofile.is_banned = False
+                    userprofile.time_out_end = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
+                    userprofile.save()
+            elif userprofile and userprofile.is_banned:
+                # Log the user out
+                logout(request)
+                # Redirect to login page or a custom "banned" page
+                return redirect('sign_in')  # Change to your login URL name
+            
+                # raise forms.ValidationError(
+                #     f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                #     code='banned',
+                # )
+            else:
+                userprofile.is_banned = True
+                userprofile.save()
+                # Log the user out
+                logout(request)
+                # Redirect to login page or a custom "banned" page
+                return redirect('sign_in')  # Change to your login URL name
+                # raise forms.ValidationError(
+                #     f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                #     code='banned',
+                # )
+                
+        except UserProfile.DoesNotExist:
+            pass
+        return function(request, *args, **kwargs)
+    return wrap
+
+def login_not_banned_required(function):
+    """
+    Combined decorator that checks if user is both logged in and not banned.
+    If user is banned, they will be logged out automatically.
+    """
+    return login_required(not_banned_required(function))
+
 
 # Create your views here.
 # Home view (landing page)
@@ -32,10 +94,10 @@ class CustomLoginView(LoginView):
     
 
 # experience section
-@login_required
+@login_not_banned_required
 def dashboard(request):
     # Get documents created by the user
-    owned_documents = Document.objects.filter(user=request.user).order_by('-created_at')
+    owned_documents = Document.objects.filter(owner=request.user).order_by('-created_at')
     
     # Get documents the user is collaborating on
     collaborations = Collaborator.objects.filter(user=request.user).order_by('-added_at')
@@ -47,23 +109,25 @@ def dashboard(request):
     
     return render(request, 'mainapp/dashboard.html', context)
 
-@login_required
+@login_not_banned_required
 def text_editor(request, pk=None):
     if pk is None:
         doc = None
     else:
         doc = get_object_or_404(Document, pk=pk)
-        if False: #CHANGE THIS TO is_shared IN DOCUMENT TABLE
+        if doc.is_shared:
             doc = get_object_or_404(Collaborator,document = pk, user = request.user)
             docID = doc.document.pk
         else:
-            # this should get the document from collab
-            doc = get_object_or_404(Document, pk=pk, user=request.user)
+            doc = get_object_or_404(Document, pk=pk, owner=request.user)
             docID  = pk
+
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
+
 
     return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID, 'user_profile' : UserProfile})
 
-@login_required
+@login_not_banned_required
 def user_settings(request):
     if request.method == 'POST':
         # Handle settings update
@@ -76,7 +140,7 @@ I had Gpt help me make this so idk why that else block is there (likley to call 
 From my understanding, create_document is called when the new document page is loaded (GET), Then do stuff for POST
 '''
 
-@login_required
+@login_not_banned_required
 def create_document(request):
     if request.method == 'POST':
         form = DocumentCreateForm(request.POST, request.FILES)
@@ -96,7 +160,7 @@ def create_document(request):
             doc = Document.objects.create(
                 title=title,
                 content=content,
-                user=request.user
+                owner=request.user
             )
             # redirect into the editor for this doc
             return redirect('text_editor', pk=doc.pk)
@@ -113,14 +177,14 @@ Anthony
 -added save_document to save the text when editing after initial creation of text.
 '''
 
-@login_required
+@login_not_banned_required
 def get_document(request, pk):
     print(f"get_document called: pk={pk}, user={request.user}, is_authenticated={request.user.is_authenticated}")
     if request.method != 'GET':
         print(f"Invalid request method: {request.method}")
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     try:
-        doc = get_object_or_404(Document, pk=pk, user=request.user)
+        doc = get_object_or_404(Document, pk=pk)
         return JsonResponse({
             'id': doc.pk,
             'title': doc.title,
@@ -131,16 +195,25 @@ def get_document(request, pk):
     except Document.DoesNotExist:
         return JsonResponse({'error': 'File not found'}, status=404)
 
-@login_required
+@login_not_banned_required
 def save_document(request, pk):
     if request.method == 'POST':
         try:
-            doc = get_object_or_404(Document, pk=pk, user=request.user)
+            doc = get_object_or_404(Document, pk=pk)
             data = json.loads(request.body)
             content = data.get('content')
             if content is not None:
-                doc.content = content
-                doc.save()
+                
+                if doc.is_shared:
+                    doc.content = content
+                    doc.save()
+                    return JsonResponse({
+                        'message': 'Text version saved to the original successfully!',
+                        'latest_update': doc.latest_update.isoformat()
+                    })
+                else:
+                    doc.content = content
+                    doc.save()
                 return JsonResponse({
                     'message': 'Text saved successfully!',
                     'latest_update': doc.latest_update.isoformat()
@@ -154,9 +227,19 @@ def save_document(request, pk):
             raise  # Re-raise the exception to see the full traceback in the server logs
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+@login_not_banned_required
+def fileComplaint(request):
+    # Render the send_message.html template with a context that indicates 
+    # we want to activate the complaint tab
+    context = {
+        # Include any necessary form and data for the send_message template
+        'active_tab': 'Complaint'  # This will be used to set the active tab
+    }
+    return render(request, 'mainapp/send_message.html', context)
+
 
 # Inbox functionality
-@login_required
+@login_not_banned_required
 def inbox(request):
     # Get all messages for the current user
     received_messages = Message.objects.filter(recipient=request.user).order_by('-timestamp')
@@ -180,7 +263,7 @@ def inbox(request):
     }
     return render(request, 'mainapp/inbox.html', context)
 
-@login_required
+@login_not_banned_required
 def message_detail(request, message_id):
     message = get_object_or_404(Message, id=message_id)
     
@@ -201,10 +284,11 @@ def message_detail(request, message_id):
     }
     return render(request, 'mainapp/message_detail.html', context)
 
-@login_required
+@login_not_banned_required
 def send_message(request):
     # Get user's documents for collaboration invites
-    user_documents = Document.objects.filter(user=request.user)
+    user_documents = Document.objects.filter(owner=request.user)
+
     
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -265,7 +349,7 @@ def send_message(request):
                 document_id = request.POST.get('related_document')
                 if document_id:
                     try:
-                        document = Document.objects.get(id=document_id, user=request.user)
+                        document = Document.objects.get(id=document_id, owner=request.user)
                         message.related_document = document
                     except Document.DoesNotExist:
                         messages.error(request, "Selected document does not exist or you don't have permission.")
@@ -284,7 +368,6 @@ def send_message(request):
             
             # Save the message
             message.save()
-            messages.success(request, f"{message_type} sent successfully!")
             return redirect('inbox')
         else:
             # Show detailed form errors
@@ -325,13 +408,16 @@ def send_message(request):
         
         form = MessageForm(initial=initial_data)
     
+    # Get user's documents for collaboration invites
+    user_documents = Document.objects.filter(owner=request.user)
+
     return render(request, 'mainapp/send_message.html', {
         'message_type': message_type,
         'form': form,
         'user_documents': user_documents
     })
 
-@login_required
+@login_not_banned_required
 def delete_message(request, message_id):
     message = get_object_or_404(Message, id=message_id)
     
@@ -341,10 +427,9 @@ def delete_message(request, message_id):
         return redirect('inbox')
     
     message.delete()
-    messages.success(request, "Message deleted successfully!")
     return redirect('inbox')
 
-@login_required
+@login_not_banned_required
 def get_unread_count(request):
     """API endpoint to get unread message count for the current user"""
     if request.user.is_authenticated:
@@ -356,17 +441,17 @@ def get_unread_count(request):
 {{{Transactions handling starts below
 """
 
-@login_required
+@login_not_banned_required
 def tokens(request):
     packages = TokensPackage.objects.all()
     return render(request, 'mainapp/tokens.html', {'packages' : packages, 'user_profile' : request.user.userprofile})
 
-@login_required
+@login_not_banned_required
 def select_package(request, package_id):
     request.session['selected_package_id'] = package_id
     return redirect('tokens_landing')
 
-@login_required
+@login_not_banned_required
 def upgrade_user(request):
     user = request.user.userprofile
     if user.tier != 'Free':
@@ -403,13 +488,12 @@ def upgrade_user(request):
             user.tier = "Paid"
             user.save()
             
-            messages.success(request, "You are now a PAID user!")
             redirect('text_editor')
     else:
         form = BankInfoForm()
 
     return render(request, 'mainapp/upgrade.html', {'form' : form, 'card_info' : card_info})
-@login_required
+@login_not_banned_required
 def cart(request):
     user = request.user.userprofile
 
@@ -463,7 +547,7 @@ def cart(request):
 
         request.session.pop('selected_package_id', None)
 
-        return redirect('tokens_landing') # Make a thank you page to redirect to.
+        return render(request, 'mainapp/text_editor.html') # Make a thank you page to redirect to.
 
     return render(request, 'mainapp/cart.html', {'package' : package, 'cards' : cards, 'user_profile' : request.user.userprofile})
 
@@ -471,7 +555,7 @@ def cart(request):
 End of transaction handling}}}
 """
 
-@login_required
+@login_not_banned_required
 def handle_invitation(request, message_id, action):
     """Handle accepting or declining collaboration invitations"""
     invite = get_object_or_404(Message, id=message_id, message_type=Message.MessageType.COLLABORATION)
@@ -489,16 +573,24 @@ def handle_invitation(request, message_id, action):
     # Update invitation status based on action
     if action == 'accept':
         invite.invitation_status = Message.InvitationStatus.ACCEPTED
-        messages.success(request, "Collaboration invitation accepted!")
         
         # Add collaboration logic here
         if invite.related_document:
             try:
+                if not invite.related_document.is_shared:
+                    invite.related_document.is_shared = True
+                    invite.related_document.save()
+                    # Create a new record for owner
+                    Collaborator.objects.create(
+                        document=invite.related_document,
+                        user=invite.related_document.owner,
+                        content=invite.related_document.content
+                    )
                 # Create a new collaborator record
                 Collaborator.objects.create(
                     document=invite.related_document,
                     user=request.user,
-                    content=""  # Initialize with empty content or default text
+                    content=invite.related_document.content
                 )
             except Exception as e:
                 # Log the error but don't interrupt the process
@@ -506,7 +598,6 @@ def handle_invitation(request, message_id, action):
                 
     elif action == 'decline':
         invite.invitation_status = Message.InvitationStatus.DECLINED
-        messages.success(request, "Collaboration invitation declined.")
     else:
         messages.error(request, "Invalid action specified.")
         return redirect('inbox')
@@ -515,3 +606,33 @@ def handle_invitation(request, message_id, action):
     invite.save()
     
     return redirect('inbox')
+
+from django.views.decorators.csrf import csrf_exempt
+
+from .our_google_ai import correctionAi
+# get blacklisted words:
+def get_blacklist(request):
+    if request.method == 'GET':
+        blacklist = Blacklist.objects.all().values('word')
+        return JsonResponse({'black_lsit_words': list(blacklist)}, status=200)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+# AI function:
+@csrf_exempt
+def correct_text(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            input_text = data.get('input_text', '')
+            hidden_text = data.get('hidden_text', '')
+            blacklist_words = data.get('blacklist_words', [])
+
+            # Call your text correction function
+            corrected_text = correctionAi(input_text, hidden_text, blacklist_words)
+
+            return JsonResponse({'corrected_text': corrected_text}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
