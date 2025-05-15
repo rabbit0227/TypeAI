@@ -52,9 +52,16 @@ def text_editor(request, pk=None):
     if pk is None:
         doc = None
     else:
-        doc = get_object_or_404(Document, pk=pk, user=request.user)
-    return render(request, 'mainapp/text_editor.html', {'user_profile' : request.user.userprofile, 'document': doc})
+        doc = get_object_or_404(Document, pk=pk)
+        if doc.is_shared:
+            doc = get_object_or_404(Collaborator,document = pk, user = request.user)
+            docID = doc.document.pk
+        else:
+            # this should get the document from collab
+            doc = get_object_or_404(Document, pk=pk, owner=request.user)
+            docID  = pk
 
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
 
 @login_required
 def user_settings(request):
