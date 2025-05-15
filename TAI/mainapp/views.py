@@ -18,6 +18,7 @@ from django.utils import timezone
 from .forms import MessageForm, CustomAuthenticationForm
 from .models import Message
 
+
 def not_banned_required(function):
     """
     Decorator that checks if a user is banned and logs them out if they are.
@@ -37,17 +38,26 @@ def not_banned_required(function):
                     userprofile.time_out_end = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
                     userprofile.save()
             elif userprofile and userprofile.is_banned:
-                raise forms.ValidationError(
-                    f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
-                    code='banned',
-                )
+                # Log the user out
+                logout(request)
+                # Redirect to login page or a custom "banned" page
+                return redirect('sign_in')  # Change to your login URL name
+            
+                # raise forms.ValidationError(
+                #     f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                #     code='banned',
+                # )
             else:
                 userprofile.is_banned = True
                 userprofile.save()
-                raise forms.ValidationError(
-                    f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
-                    code='banned',
-                )
+                # Log the user out
+                logout(request)
+                # Redirect to login page or a custom "banned" page
+                return redirect('sign_in')  # Change to your login URL name
+                # raise forms.ValidationError(
+                #     f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                #     code='banned',
+                # )
                 
         except UserProfile.DoesNotExist:
             pass
@@ -346,7 +356,6 @@ def send_message(request):
             
             # Save the message
             message.save()
-            messages.success(request, f"{message_type} sent successfully!")
             return redirect('inbox')
         else:
             # Show detailed form errors
