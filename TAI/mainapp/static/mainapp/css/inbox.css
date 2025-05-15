@@ -84,12 +84,22 @@
     padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .no-messages {
     text-align: center;
     padding: 40px;
     color: #777;
+}
+
+.message-item a{
+    color: rgb(40, 48, 87);
+    text-decoration: none;
+}
+
+.dark-theme .message-item a{
+    color: rgb(174, 222, 243);
 }
 
 /* Dark theme specific styles */

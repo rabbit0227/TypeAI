@@ -31,7 +31,7 @@ async function updateFromFile() {
             elements.updateBtn.style.display = 'inline-block';
         }
         showUpdateConfirmation();
-        addLogEntry('File updated');
+        // addLogEntry('File updated');
         alert('Document updated successfully!');
     } catch (err) {
         console.error('Update failed', err);

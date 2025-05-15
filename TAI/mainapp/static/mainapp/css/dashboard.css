@@ -49,6 +49,10 @@ body.dark-theme .dashboard-container p {
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+body.dark-theme .doc-section {
+    background: var(--gradient-dark);
+    color: white;
+}
 
 .doc-list {
     list-style: none;
@@ -66,6 +70,13 @@ body.dark-theme .dashboard-container p {
     background-color: #f1f3f5;
 }
 
+body.dark-theme .doc-info>a {
+    color: var(--btn-spellcheck);
+    direction: none;
+}
+body.dark-theme .doc-item:hover {
+    background: #ffffff17;
+}
 .doc-info {
     display: flex;
     flex-direction: column;
