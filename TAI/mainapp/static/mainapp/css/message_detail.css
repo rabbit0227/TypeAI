@@ -108,3 +108,90 @@
 .dark-theme .message-meta-label {
     color: #bbb;
 }
+
+.message-type {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.message-type-regular {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.message-type-collaboration {
+    background-color: #3498db;
+    color: white;
+}
+
+.message-type-complaint {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Invitation status */
+.invitation-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.invitation-pending {
+    background-color: #f1c40f;
+    color: #34495e;
+}
+
+.invitation-accepted {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.invitation-declined {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+/* Document details section */
+.document-details {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+}
+
+.document-details h3 {
+    margin-top: 0;
+    color: #34495e;
+}
+
+/* Action buttons */
+.invitation-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-accept {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-decline {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Dark theme overrides */
+.dark-theme .document-details {
+    background-color: #2c3e50;
+    border-left-color: #3498db;
+}
+
+.dark-theme .document-details h3 {
+    color: #ecf0f1;
+}
