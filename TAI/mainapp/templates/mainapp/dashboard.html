@@ -9,7 +9,7 @@
     <p>This is your dashboard. Access your documents and settings from the navigation bar.</p>
     
     <div class="dashboard-actions">
-        <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a>
+        <!-- <a href="{% url 'text_editor' %}" class="cta-button">Open Text Editor</a> -->
         <a href="{% url 'user_settings' %}" class="cta-button">Manage Settings</a>
         <a href="{% url 'create_document' %}" class="cta-button">➕ New Document</a>
     </div>
@@ -28,6 +28,9 @@
                         <div class="doc-meta">
                             <span class="doc-date">Created: {{ doc.created_at|date:"M j, Y" }}</span>
                             <span class="doc-owner">Owner: You</span>
+                            {% if doc.is_shared %}
+                            <span >Shared with others</span>
+                            {% endif %}
                         </div>
                     </div>
                 </li>
@@ -42,17 +45,19 @@
             <h3>Shared With You</h3>
             <ul class="doc-list">
                 {% for collab in collaborations %}
-                <li class="doc-item">
-                    <div class="doc-info">
-                        <a href="{% url 'text_editor' collab.document.pk %}" class="doc-title">
-                            {{ collab.document.title }}
-                        </a>
-                        <div class="doc-meta">
-                            <span class="doc-date">Added: {{ collab.added_at|date:"M j, Y" }}</span>
-                            <span class="doc-owner">Owner: {{ collab.document.user.username }}</span>
+                    {% if collab.document not in owned_documents%}
+                    <li class="doc-item">
+                        <div class="doc-info">
+                            <a href="{% url 'text_editor' collab.document.pk %}" class="doc-title">
+                                {{ collab.document.title }}
+                            </a>
+                            <div class="doc-meta">
+                                <span class="doc-date">Added: {{ collab.added_at|date:"M j, Y" }}</span>
+                                <span class="doc-owner">Owner: {{ collab.document.owner.username }}</span>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                    {% endif %}
                 {% empty %}
                 <li class="empty-docs">No shared documents.</li>
                 {% endfor %}

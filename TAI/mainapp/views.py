@@ -6,9 +6,14 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages  # Allows sending user-friendly messages
 from django.http import JsonResponse
 from django.db import transaction
-from django.utils import timezone
 from .forms import SignUpForm, DocumentCreateForm, BankInfoForm, MessageForm, CustomAuthenticationForm
 from .models import UserProfile, Card, TokensPackage, Transaction, Document, Message, Collaborator, User, Blacklist
+from .forms import SignUpForm, DocumentCreateForm
+from .models import UserProfile, Document, Collaborator, User, Blacklist
+
+from django.utils import timezone
+from .forms import MessageForm, CustomAuthenticationForm
+from .models import Message
 
 # Create your views here.
 # Home view (landing page)
@@ -35,7 +40,7 @@ class CustomLoginView(LoginView):
 @login_required
 def dashboard(request):
     # Get documents created by the user
-    owned_documents = Document.objects.filter(user=request.user).order_by('-created_at')
+    owned_documents = Document.objects.filter(owner=request.user).order_by('-created_at')
     
     # Get documents the user is collaborating on
     collaborations = Collaborator.objects.filter(user=request.user).order_by('-added_at')
@@ -52,8 +57,16 @@ def text_editor(request, pk=None):
     if pk is None:
         doc = None
     else:
-        doc = get_object_or_404(Document, pk=pk, user=request.user)
-    return render(request, 'mainapp/text_editor.html', {'user_profile' : request.user.userprofile, 'document': doc})
+        doc = get_object_or_404(Document, pk=pk)
+        if doc.is_shared:
+            doc = get_object_or_404(Collaborator,document = pk, user = request.user)
+            docID = doc.document.pk
+        else:
+            # this should get the document from collab
+            doc = get_object_or_404(Document, pk=pk, owner=request.user)
+            docID  = pk
+
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
 
 
 @login_required
@@ -89,7 +102,7 @@ def create_document(request):
             doc = Document.objects.create(
                 title=title,
                 content=content,
-                user=request.user
+                owner=request.user
             )
             # redirect into the editor for this doc
             return redirect('text_editor', pk=doc.pk)
@@ -113,7 +126,7 @@ def get_document(request, pk):
         print(f"Invalid request method: {request.method}")
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     try:
-        doc = get_object_or_404(Document, pk=pk, user=request.user)
+        doc = get_object_or_404(Document, pk=pk, owner=request.user)
         return JsonResponse({
             'id': doc.pk,
             'title': doc.title,
@@ -128,7 +141,7 @@ def get_document(request, pk):
 def save_document(request, pk):
     if request.method == 'POST':
         try:
-            doc = get_object_or_404(Document, pk=pk, user=request.user)
+            doc = get_object_or_404(Document, pk=pk, owner=request.user)
             data = json.loads(request.body)
             content = data.get('content')
             if content is not None:
@@ -147,7 +160,7 @@ def save_document(request, pk):
             raise  # Re-raise the exception to see the full traceback in the server logs
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
+@login_required
 def fileComplaint(request):
     # Render the send_message.html template with a context that indicates 
     # we want to activate the complaint tab
@@ -233,7 +246,7 @@ def send_message(request):
                 document_id = request.POST.get('related_document')
                 if document_id:
                     try:
-                        document = Document.objects.get(id=document_id, user=request.user)
+                        document = Document.objects.get(id=document_id, owner=request.user)
                         message.related_document = document
                     except Document.DoesNotExist:
                         messages.error(request, "Selected document does not exist or you don't have permission.")
@@ -260,7 +273,7 @@ def send_message(request):
         form = MessageForm(initial=initial_data)
     
     # Get user's documents for collaboration invites
-    user_documents = Document.objects.filter(user=request.user)
+    user_documents = Document.objects.filter(owner=request.user)
     
     return render(request, 'mainapp/send_message.html', {
         'form': form,
@@ -430,11 +443,20 @@ def handle_invitation(request, message_id, action):
         # Add collaboration logic here
         if invite.related_document:
             try:
+                if not invite.related_document.is_shared:
+                    invite.related_document.is_shared = True
+                    invite.related_document.save()
+                    # Create a new record for owner
+                    Collaborator.objects.create(
+                        document=invite.related_document,
+                        user=invite.related_document.owner,
+                        content=invite.related_document.content
+                    )
                 # Create a new collaborator record
                 Collaborator.objects.create(
                     document=invite.related_document,
                     user=request.user,
-                    content=""  # Initialize with empty content or default text
+                    content=invite.related_document.content
                 )
             except Exception as e:
                 # Log the error but don't interrupt the process

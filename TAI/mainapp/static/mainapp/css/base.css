@@ -37,6 +37,7 @@ body.dark-theme {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
 }
 
 .inbox-button i {

@@ -29,3 +29,14 @@ function logout() {
     addLogEntry('User logged out');
     alert('Logout feature not yet implemented.');
 }
+
+function redirectToComplaintForm() {
+
+    window.location.href = "{% url 'file_complaint' %}";
+}
+
+function addToBlacklist() {
+    
+    // we are reusing complaint message for blacklist also
+    window.location.href = "{% url 'file_complaint' %}";
+}

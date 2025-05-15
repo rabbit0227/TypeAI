@@ -24,6 +24,7 @@ class CustomAuthenticationForm(AuthenticationForm):
                 )
         except UserProfile.DoesNotExist:
             pass
+    
 
 class SignUpForm(UserCreationForm):
     
@@ -75,4 +76,3 @@ class BankInfoForm(forms.ModelForm):
         widgets = {
             'expiry' : forms.TextInput(attrs={'placeholder' : 'MM/YY'})
         }
-

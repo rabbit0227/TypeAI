@@ -50,4 +50,3 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f"Package '{package['name']} created successfully"))
             else:
                 self.stdout.write(self.style.WARNING(f"Package '{package['name']} already exists."))
-        
