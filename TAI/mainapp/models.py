@@ -21,6 +21,8 @@ class UserProfile(models.Model):
     tokens = models.PositiveIntegerField(
         default=20
     )
+    
+    # time_out_end = models.DateTimeField(default=datetime(2025, 1, 1, 12, 0, 0)) When there is time out, set to current time + 3 min
 
     is_banned = models.BooleanField(default=False)
 

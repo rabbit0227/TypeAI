@@ -58,10 +58,10 @@ def text_editor(request, pk=None):
             docID = doc.document.pk
         else:
             # this should get the document from collab
-            doc = get_object_or_404(Document, pk=pk, owner=request.user)
+            doc = get_object_or_404(Document, pk=pk, user=request.user)
             docID  = pk
 
-    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID, 'user_profile' : UserProfile})
 
 @login_required
 def user_settings(request):
