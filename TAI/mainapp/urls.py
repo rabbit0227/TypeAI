@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import home_page, sign_up, dashboard, text_editor, user_settings
 from .views import create_document, save_document, get_document
-from .views import inbox, message_detail, send_message, delete_message, get_unread_count, handle_invitation
+from .views import inbox, message_detail, send_message, delete_message, get_unread_count, handle_invitation, fileComplaint
 from .views import CustomLoginView
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     path('docs/<int:pk>/edit/', text_editor,    name='text_editor'),
     path('api/docs/<int:pk>/', get_document, name='get_document'),
     path('api/docs/<int:pk>/save/', save_document, name='save_document'),
+    path('file-complaint/', fileComplaint, name='file_complaint'),
     
     # Inbox URLs, names are subject to change in further design
     path('inbox/', inbox, name='inbox'),

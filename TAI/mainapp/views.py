@@ -159,6 +159,16 @@ def save_document(request, pk):
         except Exception as e:
             raise  # Re-raise the exception to see the full traceback in the server logs
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+@login_required
+def fileComplaint(request):
+    # Render the send_message.html template with a context that indicates 
+    # we want to activate the complaint tab
+    context = {
+        # Include any necessary form and data for the send_message template
+        'active_tab': 'Complaint'  # This will be used to set the active tab
+    }
+    return render(request, 'mainapp/send_message.html', context)
+
 # Inbox functionality
 @login_required
 def inbox(request):
