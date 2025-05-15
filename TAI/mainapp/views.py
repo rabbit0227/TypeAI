@@ -16,6 +16,7 @@ from django.utils import timezone
 from .forms import MessageForm, CustomAuthenticationForm
 from .models import Message
 
+
 def not_banned_required(function):
     """
     Decorator that checks if a user is banned and logs them out if they are.
@@ -31,7 +32,7 @@ def not_banned_required(function):
                 # Log the user out
                 logout(request)
                 # Redirect to login page or a custom "banned" page
-                return redirect('login')  # Change to your login URL name
+                return redirect('sign_in')  # Change to your login URL name
         except AttributeError:
             # Handle case where user might not have a profile
             pass
@@ -331,7 +332,6 @@ def send_message(request):
             
             # Save the message
             message.save()
-            messages.success(request, f"{message_type} sent successfully!")
             return redirect('inbox')
         else:
             # Show detailed form errors
