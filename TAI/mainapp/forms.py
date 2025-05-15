@@ -27,9 +27,17 @@ class CustomAuthenticationForm(AuthenticationForm):
                     userprofile.save()
             elif userprofile and userprofile.is_banned:
                 raise forms.ValidationError(
-                    f"Your account has been banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                    f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
                     code='banned',
                 )
+            else:
+                userprofile.is_banned = True
+                userprofile.save()
+                raise forms.ValidationError(
+                    f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                    code='banned',
+                )
+                
         except UserProfile.DoesNotExist:
             pass
 

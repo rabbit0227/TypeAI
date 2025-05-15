@@ -24,10 +24,9 @@ class UserProfile(models.Model):
     )
     
     time_out_end = models.DateTimeField(
-        null=True,        # allow SQL NULL
-        blank=True,       # allow Django forms to accept empty
-        default=None      # default to NULL if no value provided
-    )
+        default = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
+    ) #When there is time out, set to current time + 3 min
+
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
