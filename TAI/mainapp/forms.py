@@ -2,6 +2,28 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import UserProfile, Document, Message, Card
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        # First perform the default validation
+        super().confirm_login_allowed(user)
+        
+        # Then check if the user is banned
+        
+       
+        try:
+            userprofile = get_object_or_404(UserProfile,associated_user = user )
+            if userprofile and userprofile.is_banned:
+                raise forms.ValidationError(
+                    "Your account has been banned. Please contact support.",
+                    code='banned',
+                )
+        except UserProfile.DoesNotExist:
+            pass
 
 class SignUpForm(UserCreationForm):
     
