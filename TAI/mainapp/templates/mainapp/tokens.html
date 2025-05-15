@@ -2,10 +2,12 @@
 {% block title %}Tokens Shop{% endblock %}
 {% block content %}
 <div class="token-shop-container">
-    <h2>Account Status</h2>
-    <a>{{ user_profile.associated_user.username }}'s <b>{{ user_profile.tier }}</b> account</a> 
+    
 </div>
 <div class="dashboard-container">
+    <h2>Account Status</h2>
+    <a>{{ user_profile.associated_user.username }}'s <b>{{ user_profile.tier }}</b> account</a
+        <p><br><br></p> 
     <h2>Select a package</h2>
     <div class="">
         {% for package in packages %}
