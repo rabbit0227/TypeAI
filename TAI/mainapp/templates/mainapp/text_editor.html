@@ -20,6 +20,12 @@
                 <img class="icon" src="{% static 'mainapp/media/user-plus-solid.svg' %}" alt="img"><span class="button-text">Add Collaborator</span>
             </button>
             <!-- buttons for complaint, blacklist word, view collaborators,  -->
+            <button class="sidebar-button" id="complaintBtn" onclick="redirectToComplaintForm()" title="File Complaint">
+                <img class="icon" src="{% static 'mainapp/media/complain.svg' %}" alt="img"><span class="button-text">File Complaint</span>
+            </button>
+            <button class="sidebar-button" id="blacklistBtn" onclick="addToBlacklist()" title="Add to Blacklist">
+                <img class="icon" src="{% static 'mainapp/media/blacklist-16.svg' %}" alt="img"><span class="button-text">Add to Blacklist</span>
+            </button>
         </div>
         <div class="sidebar-bottom">
             <h3>Recent Activity</h3>
@@ -51,10 +57,6 @@
         <!-- Editor Area -->
         <div class="editor-area">
             <div class="textarea-container">
-                <!--
-                <label class="textarea-title">Text Title</label>
-                <textarea id="editor" placeholder="Type your text here..."></textarea>
-                -->
                 <label class="textarea-title">{{ document.title }}</label>
                 <textarea id="editor" placeholder="Type your text here...">{{ document.content|escape }}</textarea>
                 
@@ -80,12 +82,6 @@
         console.warn('DOCUMENT_ID is null - no document provided');
     }
 </script>
-
-
-
-
-
-<!-- <script src="{% static 'js/fileJS.js' %}"></script> -->
 <script src="{% static 'mainapp/js/init.js' %}"></script>
 <script src="{% static 'mainapp/js/domUtils.js' %}"></script>
 <script src="{% static 'mainapp/js/state.js' %}"></script>

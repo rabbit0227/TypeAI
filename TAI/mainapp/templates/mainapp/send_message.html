@@ -18,7 +18,7 @@
     <div class="compose-form">
         <!-- Message type selector -->
         <div class="message-type-selector">
-            <div class="message-type-option message-type-regular active" data-type="Regular">
+            <div class="message-type-option message-type-regular" data-type="Regular">
                 <i class="fas fa-envelope"></i> Regular Message
             </div>
             <div class="message-type-option message-type-collaboration" data-type="Collaboration">
@@ -89,43 +89,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Message type selector functionality
-    const typeOptions = document.querySelectorAll('.message-type-option');
-    const messageTypeInput = document.getElementById('message_type');
-    const documentSelector = document.getElementById('document-selector');
-    
-    typeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            // Remove active class from all options
-            typeOptions.forEach(opt => opt.classList.remove('active'));
-            
-            // Add active class to clicked option
-            this.classList.add('active');
-            
-            // Update hidden input value
-            const messageType = this.getAttribute('data-type');
-            messageTypeInput.value = messageType;
-            
-            // Show/hide document selector based on message type
-            if (messageType === 'Collaboration') {
-                documentSelector.style.display = 'block';
-            } else {
-                documentSelector.style.display = 'none';
-            }
-            
-            // Update subject placeholder based on message type
-            const subjectField = document.getElementById('id_subject');
-            if (messageType === 'Collaboration') {
-                subjectField.placeholder = 'Collaboration invitation for document';
-            } else if (messageType === 'Complaint') {
-                subjectField.placeholder = 'Issue report for administrator';
-            } else {
-                subjectField.placeholder = 'Message subject';
-            }
-        });
-    });
-});
-</script>
+<script src="{% static 'mainapp/js/message_sender.js' %}"></script>
 {% endblock %}

@@ -2,13 +2,16 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import home_page, sign_up, dashboard, text_editor, user_settings
 from .views import create_document, save_document, get_document
-from .views import inbox, message_detail, send_message, delete_message, get_unread_count, handle_invitation
+from .views import inbox, message_detail, send_message, delete_message, get_unread_count, handle_invitation, fileComplaint
+from .views import CustomLoginView
 
 urlpatterns = [
     path('', home_page, name='home-page'),
     path('sign-up/', sign_up, name='sign_up'),
-    path("sign-in/", LoginView.as_view(template_name="mainapp/sign_in.html"), name="sign_in"),
+    path("sign-in/", CustomLoginView.as_view(template_name="mainapp/sign_in.html"), name="sign_in"),
     path('dashboard/', dashboard, name='dashboard'),
+    # path('login/', CustomLoginView.as_view(), name='login'),
+    
     # We need to remove this in other HTML stuff
     path('text-editor/', text_editor, name='text_editor'),
     path('settings/', user_settings, name='user_settings'),
@@ -17,6 +20,7 @@ urlpatterns = [
     path('docs/<int:pk>/edit/', text_editor,    name='text_editor'),
     path('api/docs/<int:pk>/', get_document, name='get_document'),
     path('api/docs/<int:pk>/save/', save_document, name='save_document'),
+    path('file-complaint/', fileComplaint, name='file_complaint'),
     
     # Inbox URLs, names are subject to change in further design
     path('inbox/', inbox, name='inbox'),
