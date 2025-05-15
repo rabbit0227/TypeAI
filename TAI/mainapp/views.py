@@ -183,7 +183,7 @@ def get_document(request, pk):
         print(f"Invalid request method: {request.method}")
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     try:
-        doc = get_object_or_404(Document, pk=pk, owner=request.user)
+        doc = get_object_or_404(Document, pk=pk)
         return JsonResponse({
             'id': doc.pk,
             'title': doc.title,
@@ -198,12 +198,21 @@ def get_document(request, pk):
 def save_document(request, pk):
     if request.method == 'POST':
         try:
-            doc = get_object_or_404(Document, pk=pk, owner=request.user)
+            doc = get_object_or_404(Document, pk=pk)
             data = json.loads(request.body)
             content = data.get('content')
             if content is not None:
-                doc.content = content
-                doc.save()
+                
+                if doc.is_shared:
+                    doc.content = content
+                    doc.save()
+                    return JsonResponse({
+                        'message': 'Text version saved to the original successfully!',
+                        'latest_update': doc.latest_update.isoformat()
+                    })
+                else:
+                    doc.content = content
+                    doc.save()
                 return JsonResponse({
                     'message': 'Text saved successfully!',
                     'latest_update': doc.latest_update.isoformat()
@@ -598,3 +607,33 @@ def handle_invitation(request, message_id, action):
     invite.save()
     
     return redirect('inbox')
+
+from django.views.decorators.csrf import csrf_exempt
+
+from .our_google_ai import correctionAi
+# get blacklisted words:
+def get_blacklist(request):
+    if request.method == 'GET':
+        blacklist = Blacklist.objects.all().values('word')
+        return JsonResponse({'black_lsit_words': list(blacklist)}, status=200)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+# AI function:
+@csrf_exempt
+def correct_text(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            input_text = data.get('input_text', '')
+            hidden_text = data.get('hidden_text', '')
+            blacklist_words = data.get('blacklist_words', [])
+
+            # Call your text correction function
+            corrected_text = correctionAi(input_text, hidden_text, blacklist_words)
+
+            return JsonResponse({'corrected_text': corrected_text}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+

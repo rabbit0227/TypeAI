@@ -16,7 +16,6 @@ urlpatterns = [
     path('api/docs/<int:pk>/', get_document, name='get_document'),
     path('api/docs/<int:pk>/save/', save_document, name='save_document'),
 
-    
     # Inbox URLs, names are subject to change in further design
     path('inbox/', inbox, name='inbox'),
     path('inbox/message/<int:message_id>/', message_detail, name='message_detail'),
@@ -29,5 +28,9 @@ urlpatterns = [
     path('cart/', cart, name='payment_cart'),
     path('upgrade/', upgrade_user, name='upgrade_user'),
     path('<int:package_id>/', select_package, name='select_package'),
+
+    # ai api
+    path('api/blacklist/', get_blacklist, name='get_blacklist'),
+    path('api/correct-text/', correct_text, name='correct_text'),
 ]
 

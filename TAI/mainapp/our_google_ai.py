@@ -50,4 +50,4 @@ def correctionAi(text, highlight, blacklist):
     return response.text
 
 # runAi()
-print(correctionAi("The atomik apple, slices six way.","The ****** apple, slices six way.",["slices"])[:-2])
+# print(correctionAi("The atomik apple, slices six way.","The ****** apple, slices six way.",["slices"])[:-2])
