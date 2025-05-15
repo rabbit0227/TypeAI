@@ -134,11 +134,6 @@ def user_settings(request):
         return redirect('user-settings')
     return render(request, 'mainapp/user_settings.html')
 
-'''
-Creation post reques. DocumentCreateForm Is used to create the Docuement which will be created in the db
-I had Gpt help me make this so idk why that else block is there (likley to call the form)
-From my understanding, create_document is called when the new document page is loaded (GET), Then do stuff for POST
-'''
 
 @login_not_banned_required
 def create_document(request):
