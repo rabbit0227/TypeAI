@@ -546,7 +546,7 @@ def cart(request):
 
         request.session.pop('selected_package_id', None)
 
-        return redirect('tokens_landing') # Make a thank you page to redirect to.
+        return render(request, 'mainapp/text_editor.html') # Make a thank you page to redirect to.
 
     return render(request, 'mainapp/cart.html', {'package' : package, 'cards' : cards, 'user_profile' : request.user.userprofile})
 
