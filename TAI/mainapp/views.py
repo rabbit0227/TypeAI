@@ -7,6 +7,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages  # Allows sending user-friendly messages
 from django.http import JsonResponse
 from django.db import transaction
+from django import forms
+from datetime import datetime
 from .forms import SignUpForm, DocumentCreateForm, BankInfoForm, MessageForm, CustomAuthenticationForm
 from .models import UserProfile, Card, TokensPackage, Transaction, Document, Message, Collaborator, User, Blacklist
 from .forms import SignUpForm, DocumentCreateForm
@@ -24,18 +26,31 @@ def not_banned_required(function):
     @wraps(function)
     def wrap(request, *args, **kwargs):
         user = request.user
+        
+        now = timezone.now()
         # Check if user has a userprofile and if they're banned
         try:
-            # Access the profile through the OneToOneField relationship
-            if user.userprofile.is_banned:
-                # Log the user out
-                logout(request)
-                # Redirect to login page or a custom "banned" page
-                return redirect('login')  # Change to your login URL name
-        except AttributeError:
-            # Handle case where user might not have a profile
+            userprofile = get_object_or_404(UserProfile,associated_user = user )
+            if userprofile and userprofile.time_out_end <= now:
+                if userprofile.is_banned:
+                    userprofile.is_banned = False
+                    userprofile.time_out_end = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
+                    userprofile.save()
+            elif userprofile and userprofile.is_banned:
+                raise forms.ValidationError(
+                    f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                    code='banned',
+                )
+            else:
+                userprofile.is_banned = True
+                userprofile.save()
+                raise forms.ValidationError(
+                    f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                    code='banned',
+                )
+                
+        except UserProfile.DoesNotExist:
             pass
-        
         return function(request, *args, **kwargs)
     return wrap
 
