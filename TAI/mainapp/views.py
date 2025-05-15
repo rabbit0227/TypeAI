@@ -105,10 +105,9 @@ def dashboard(request):
     context = {
         'owned_documents': owned_documents,
         'collaborations': collaborations,
-        'user_profile' : request.user.userprofile,
     }
     
-    return render(request, 'mainapp/dashboard.html', context, )
+    return render(request, 'mainapp/dashboard.html', context)
 
 @login_not_banned_required
 def text_editor(request, pk=None):
@@ -124,7 +123,7 @@ def text_editor(request, pk=None):
             doc = get_object_or_404(Document, pk=pk, owner=request.user)
             docID  = pk
 
-    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID, 'user_profile' : request.user.userprofile})
+    return render(request, 'mainapp/text_editor.html', {'document': doc, 'doc_id': docID})
 
 
 @login_not_banned_required
@@ -132,7 +131,7 @@ def user_settings(request):
     if request.method == 'POST':
         # Handle settings update
         return redirect('user-settings')
-    return render(request, 'mainapp/user_settings.html', {'user_profile' : request.user.userprofile})
+    return render(request, 'mainapp/user_settings.html')
 
 '''
 Creation post reques. DocumentCreateForm Is used to create the Docuement which will be created in the db
@@ -259,7 +258,6 @@ def inbox(request):
         'unread_count': unread_count,
         'pending_invites_count': pending_invites_count,
         'form': MessageForm(),
-        'user_profile' : request.user.userprofile,
     }
     return render(request, 'mainapp/inbox.html', context)
 
@@ -280,8 +278,7 @@ def message_detail(request, message_id):
     
     context = {
         'message': message,
-        'reply_form': MessageForm(initial={'recipient': message.sender, 'subject': f"Re: {message.subject}"}),
-        'user_profile' : request.user.userprofile,
+        'reply_form': MessageForm(initial={'recipient': message.sender, 'subject': f"Re: {message.subject}"})
     }
     return render(request, 'mainapp/message_detail.html', context)
 
@@ -414,8 +411,7 @@ def send_message(request):
     return render(request, 'mainapp/send_message.html', {
         'message_type': message_type,
         'form': form,
-        'user_documents': user_documents,
-        'user_profile' : request.user.userprofile
+        'user_documents': user_documents
     })
 
 @login_not_banned_required
@@ -428,7 +424,6 @@ def delete_message(request, message_id):
         return redirect('inbox')
     
     message.delete()
-    messages.success(request, "Message deleted successfully!")
     return redirect('inbox')
 
 @login_not_banned_required
@@ -490,7 +485,6 @@ def upgrade_user(request):
             user.tier = "Paid"
             user.save()
             
-            messages.success(request, "You are now a PAID user!")
             redirect('text_editor')
     else:
         form = BankInfoForm()
@@ -576,7 +570,6 @@ def handle_invitation(request, message_id, action):
     # Update invitation status based on action
     if action == 'accept':
         invite.invitation_status = Message.InvitationStatus.ACCEPTED
-        messages.success(request, "Collaboration invitation accepted!")
         
         # Add collaboration logic here
         if invite.related_document:
@@ -602,7 +595,6 @@ def handle_invitation(request, message_id, action):
                 
     elif action == 'decline':
         invite.invitation_status = Message.InvitationStatus.DECLINED
-        messages.success(request, "Collaboration invitation declined.")
     else:
         messages.error(request, "Invalid action specified.")
         return redirect('inbox')
