@@ -3,19 +3,11 @@ import json
 from google import genai
 from google.genai import types
 
-
-# api_key = ''
-
-# mymodl = "gemini-1.5-flash-latest"
-
 def correctionAi(text, highlight, blacklist):
 
-    api_key = 'AIzaSyDeFNDpPzMoVfzWsckj7Bhsk9VDNXnx6so'
+    api_key = 'add your api here'
     client = genai.Client(api_key=api_key)
 
-    # myinput = input('enter prompt : ')
-    # print(myinput)
-    # print("-"*40)
     text_prompt = '''
         From this text
         "{user_text}" and this highlight words in it "{highlighted_text}" and this blacklisted list "{blacklist_text}"
@@ -48,6 +40,3 @@ def correctionAi(text, highlight, blacklist):
     )
 
     return response.text
-
-# runAi()
-# print(correctionAi("The atomik apple, slices six way.","The ****** apple, slices six way.",["slices"])[:-2])
