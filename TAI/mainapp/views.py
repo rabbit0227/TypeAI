@@ -31,7 +31,7 @@ def not_banned_required(function):
                 # Log the user out
                 logout(request)
                 # Redirect to login page or a custom "banned" page
-                return redirect('login')  # Change to your login URL name
+                return redirect('sign_in')  # Change to your login URL name
         except AttributeError:
             # Handle case where user might not have a profile
             pass
@@ -65,7 +65,7 @@ def sign_up(request):
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = 'mainapp/sign_in.html'  # Adjust to your template path
-    
+
 
 @login_not_banned_required
 def dashboard(request):
@@ -273,7 +273,6 @@ def send_message(request):
                 
                 # Check if recipient is admin for complaints
                 if not recipient.is_staff:
-                    messages.error(request, "Complaints can only be sent to administrators.")
                     form.add_error('recipient', "Please select an administrator.")
                     return render(request, 'mainapp/send_message.html', {
                         'message_type': message_type,
@@ -321,7 +320,6 @@ def send_message(request):
             
             # Save the message
             message.save()
-            messages.success(request, f"{message_type} sent successfully!")
             return redirect('inbox')
         else:
             # Show detailed form errors
@@ -378,7 +376,6 @@ def delete_message(request, message_id):
         return redirect('inbox')
     
     message.delete()
-    messages.success(request, "Message deleted successfully!")
     return redirect('inbox')
 
 @login_not_banned_required
