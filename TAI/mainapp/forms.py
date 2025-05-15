@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from datetime import datetime
 
 class CustomAuthenticationForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
@@ -22,7 +23,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             if userprofile and userprofile.time_out_end <= now:
                 if userprofile.is_banned:
                     userprofile.is_banned = False
-                    userprofile.time_out_end = None
+                    userprofile.time_out_end = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
                     userprofile.save()
             elif userprofile and userprofile.is_banned:
                 raise forms.ValidationError(
