@@ -6,22 +6,38 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
+from datetime import datetime
+from django.utils import timezone
 
 class CustomAuthenticationForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
         # First perform the default validation
         super().confirm_login_allowed(user)
         
+        now = timezone.now()
+        
         # Then check if the user is banned
         
-       
         try:
             userprofile = get_object_or_404(UserProfile,associated_user = user )
-            if userprofile and userprofile.is_banned:
+            if userprofile and userprofile.time_out_end <= now:
+                if userprofile.is_banned:
+                    userprofile.is_banned = False
+                    userprofile.time_out_end = timezone.make_aware(datetime(2025, 1, 1, 12, 0, 0))
+                    userprofile.save()
+            elif userprofile and userprofile.is_banned:
                 raise forms.ValidationError(
-                    "Your account has been banned. Please contact support.",
+                    f"Your account has been detected to be banned. Please contact support. You will be unbanned at {userprofile.time_out_end}",
                     code='banned',
                 )
+            else:
+                userprofile.is_banned = True
+                userprofile.save()
+                raise forms.ValidationError(
+                    f"Your account has been banned in time_out_end. Please contact support. You will be unbanned at {userprofile.time_out_end}",
+                    code='banned',
+                )
+                
         except UserProfile.DoesNotExist:
             pass
     
