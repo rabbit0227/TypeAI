@@ -18,6 +18,8 @@ async function checkSpelling() {
     const cacheKey = `${textToCheck}_${state.selectionStart}_${state.selectionEnd}`;
     if (spellingCache.has(cacheKey)) {
         const { correctedText, asteriskText, wrongWords, blacklistedWords } = spellingCache.get(cacheKey);
+        state.wrongWords = wrongWords; // Store in state
+        state.blacklistedWords = blacklistedWords; // Store in state
         updateCorrections(correctedText, asteriskText, wrongWords, isPartial, fullText);
         alert(`Found ${wrongWords.length} misspelled word(s) and ${blacklistedWords.length} blacklisted word(s).`);
         return;
@@ -40,7 +42,6 @@ async function checkSpelling() {
         const blacklistedWords = [];
         let wrongWordCount = 0;
         let blacklistCount = 0;
-        let asteriskCount = 0;
 
         for (let i = 0; i < words.length; i++) {
             const word = words[i];
@@ -51,9 +52,8 @@ async function checkSpelling() {
                 if (blacklist.includes(cleanWord)) {
                     blacklistCount++;
                     blacklistedWords.push(cleanWord);
-                    correctedWords += '*'.repeat(word.length);
+                    correctedWords += word; // Keep original blacklisted word
                     asteriskText += '*'.repeat(word.length);
-                    asteriskCount += word.length;
                 } else if (!dictionary.check(cleanWord)) {
                     wrongWordCount++;
                     wrongWords.push(cleanWord);
@@ -62,11 +62,9 @@ async function checkSpelling() {
                         const correctedWord = word.replace(cleanWord, suggestions[0]);
                         correctedWords += correctedWord;
                         asteriskText += '*'.repeat(word.length);
-                        asteriskCount += word.length;
                     } else {
                         correctedWords += word;
                         asteriskText += '*'.repeat(word.length);
-                        asteriskCount += word.length;
                     }
                 } else {
                     correctedWords += word;
@@ -93,7 +91,6 @@ async function checkSpelling() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // Include CSRF token if required
                 'X-CSRFToken': getCookie('csrftoken'),
             },
             body: JSON.stringify(correctionData),
@@ -111,9 +108,11 @@ async function checkSpelling() {
         };
 
         spellingCache.set(cacheKey, result);
+        state.wrongWords = wrongWords; // Store in state
+        state.blacklistedWords = blacklistedWords; // Store in state
 
         updateCorrections(correctedText, asteriskText.trim(), wrongWords, isPartial, fullText);
-        addLogEntry(`Spelling checked (${wrongWordCount} misspelled, ${blacklistCount} blacklisted, ${asteriskCount} asterisks)`);
+        addLogEntry(`Spelling checked (${wrongWordCount} misspelled, ${blacklistCount} blacklisted)`);
         alert(`Found ${wrongWordCount} misspelled word(s) and ${blacklistCount} blacklisted word(s).`);
     } catch (error) {
         console.error('Error in checkSpelling:', error);
