@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone # for message date
+from datetime import datetime
 from .validators import validate_card_number, validate_expiry, validate_cvv
 
 class UserProfile(models.Model):
@@ -22,8 +23,11 @@ class UserProfile(models.Model):
         default=20
     )
     
-    # time_out_end = models.DateTimeField(default=datetime(2025, 1, 1, 12, 0, 0)) When there is time out, set to current time + 3 min
-
+    time_out_end = models.DateTimeField(
+        null=True,        # allow SQL NULL
+        blank=True,       # allow Django forms to accept empty
+        default=None      # default to NULL if no value provided
+    )
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
