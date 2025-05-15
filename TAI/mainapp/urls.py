@@ -15,7 +15,7 @@ urlpatterns = [
     path('docs/<int:pk>/edit/', text_editor,    name='text_editor'),
     path('api/docs/<int:pk>/', get_document, name='get_document'),
     path('api/docs/<int:pk>/save/', save_document, name='save_document'),
-    path('file-complaint/', fileComplaint, name='file_complaint'),
+
     
     # Inbox URLs, names are subject to change in further design
     path('inbox/', inbox, name='inbox'),

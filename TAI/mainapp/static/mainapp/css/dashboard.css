@@ -34,8 +34,6 @@ body.dark-theme .dashboard-container p {
     display: flex;
     gap: 1rem;
     justify-content: center;
-<<<<<<< HEAD
-=======
 }
 
 .documents-container {
@@ -45,11 +43,14 @@ body.dark-theme .dashboard-container p {
     margin-top: 2rem;
 }
 
+/* UPDATED TO USE DOC COLORS */
 .doc-section {
-    background-color: #f8f9fa;
+    background-color: var(--doc-bg);
+    color: var(--doc-text, var(--text-color));
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, color 0.3s;
 }
 body.dark-theme .doc-section {
     background: var(--gradient-dark);
@@ -64,7 +65,7 @@ body.dark-theme .doc-section {
 
 .doc-item {
     padding: 0.8rem;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid var(--doc-border);
     transition: background-color 0.2s;
 }
 
@@ -84,23 +85,30 @@ body.dark-theme .doc-item:hover {
     flex-direction: column;
 }
 
+/* Base style (light theme) */
 .doc-title {
     font-weight: 600;
-    color: #343a40;
+    color: #111111; /* black for light theme */
     text-decoration: none;
     font-size: 1.1rem;
 }
 
+/* Override for dark theme */
+body.dark-theme .doc-title {
+    color: #ffffff; /* white for dark theme */
+}
+
+
 .doc-meta {
     margin-top: 0.3rem;
     font-size: 0.85rem;
-    color: #6c757d;
+    color: var(--doc-secondary-text, #6c757d);
     display: flex;
     gap: 1rem;
 }
 
 .empty-docs {
-    color: #6c757d;
+    color: var(--doc-secondary-text, #6c757d);
     font-style: italic;
     padding: 0.8rem;
 }
@@ -111,5 +119,5 @@ body.dark-theme .doc-item:hover {
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
     }
->>>>>>> c5c72ac3f8bbdba2eb4086bca6ae18e13505b570
 }
+
