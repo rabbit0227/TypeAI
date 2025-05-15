@@ -5,7 +5,7 @@ from .views import *
 urlpatterns = [
     path('', home_page, name='home-page'),
     path('sign-up/', sign_up, name='sign_up'),
-    path("sign-in/", LoginView.as_view(template_name="mainapp/sign_in.html"), name="sign_in"),
+    path("sign-in/", CustomLoginView.as_view(template_name="mainapp/sign_in.html"), name="sign_in"),
     path('dashboard/', dashboard, name='dashboard'),
     # We need to remove this in other HTML stuff
     path('text-editor/', text_editor, name='text_editor'),
